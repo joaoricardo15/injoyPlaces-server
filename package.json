@@ -16,5 +16,8 @@
   "bugs": {
     "url": "https://github.com/joaoricardo15/Opiniao/issues"
   },
-  "homepage": "https://github.com/joaoricardo15/Opiniao#readme"
+  "homepage": "https://github.com/joaoricardo15/Opiniao#readme",
+  "dependencies": {
+    "express": "^4.16.2"
+  }
 }
