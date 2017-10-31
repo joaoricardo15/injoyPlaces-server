@@ -9,10 +9,6 @@ var express = require('express')
   , app = express()
   , server = require('http').Server(app);
 
-
-
-
-
 ///////////////////////////////////////
 //Http Server
 ///////////////////////////////////////
