@@ -18,6 +18,7 @@
   },
   "homepage": "https://github.com/joaoricardo15/Opiniao#readme",
   "dependencies": {
-    "express": "^4.16.2"
+    "express": "^4.16.2",
+    "http": "0.0.0"
   }
 }
