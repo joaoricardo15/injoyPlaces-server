@@ -1,0 +1,32 @@
+#background {
+  background-image:url(/images/tv2.jpg);
+  background-repeat:no-repeat;
+  background-size:cover;
+}
+
+.small_title {
+  font-size: 12px;
+}
+.medium_title {
+  font-size: 20px;
+}
+.big_title {
+  size: "400px";
+  font-family: "impact";
+  color: white; 
+}
+
+.button {
+  width: 100px;
+}
+
+.brand_icon {
+  height: 76px;
+  width: 210px;
+}
+
+.small_icon {
+  vertical-align: middle;
+  height: 30px;
+  width: 30px;
+}
