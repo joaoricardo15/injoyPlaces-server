@@ -1,9 +1,16 @@
-var http = require('http');
+var express = require('express')
+  , app = express();
+
+app.use(express.static('www'));
+
+app.listen(process.env.PORT);
+
+/*var http = require('http');
 http.createServer(function (req, res) {
     console.log('Got request for ' + req.url);
     res.writeHead(200, {'Content-Type': 'text/html'});
     res.end('<h1>Hello CodeX and Azure Web Apps!</h1>');
-}).listen(process.env.PORT);
+}).listen(process.env.PORT);*/
 
 // var express = require('express')
 //   , app = express()
