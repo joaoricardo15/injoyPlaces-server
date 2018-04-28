@@ -3,6 +3,7 @@
 <head>
 
   <!-- requests of script files -->
+  <script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyCTr74nVYmMqNBGYeMwuLqVe3zCnA9tRWM&callback=initMap" async defer></script>
   <script src="/node_modules/jquery/dist/jquery.min.js"></script>
   <script src="/js/bootstrap.min.js"></script>
   <script src="/js/index.js"></script>
@@ -12,79 +13,16 @@
   <link rel="stylesheet" href="/css/font-awesome.min.css"/>
   <link rel="stylesheet" href="/css/bootstrap.min.css"/>
   <link rel="stylesheet" href="/css/index.css"/>
+  
+  <!-- <link rel="stylesheet" href="/css/index.css"/> -->
+  <meta name="viewport" content="initial-scale=1.0"><meta charset="utf-8">
+
+  <title>Find</title>
 
 </head>
 <body>
-
-  <!-- Title -->
-  <br><br>
-  <div id="title">
-    <h1>Você</br>merece</br>um</br>find maneiro!</h1>
-    <!--<h5>escolha um tema e aproveite ;)</h5>-->
-  </div>
-
-  <br><br><br>
-
-  <div class="form-group">
-    <label for="usr">teu nome:</label>
-    <input type="text" class="form-control" id="my_name">
-  </div>
-
-  <div class="form-group">
-    <label for="usr">nome do boy:</label>
-    <input type="text" class="form-control" id="someoneelse_name">
-  </div>
-
-  <div class="button">
-      Clique aqui para ver as melhores opções de aventuras para vocês </br></br>
-    <button type="button" class="btn btn-info" data-toggle="modal" data-target="#resultModal">
-        <i class="fa fa-grav fa-5x" aria-hidden="true"></i>
-    </button>
-  </div></br>
-
-  <div id="resultModal" class="modal fade" role="dialog">
-      <div class="modal-dialog">
-    
-        <!-- Modal content-->
-        <div class="modal-content">
-          <div class="modal-header">
-            <button type="button" class="close" data-dismiss="modal">&times;</button>
-            <h4 class="modal-title"></h4>
-          </div>
-          <div class="modal-body">
-            <p>Melhor cidade: Curitiba</p>
-            <p>Melhor compositor: Caetano Veloso</p>
-            <p>Melhor atividade: Sexo</p>
-          </div>
-          <div class="modal-footer">
-            <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
-          </div>
-        </div>
-    
-      </div>
-    </div>
-
-  <!--
-  <div class="button">
-    <button type="button" class="btn btn-info" style="margin-top:-600px; width:300px;">Historia de nada com nada
-        &nbsp&nbsp<i class="fa fa-bath fa-5x" aria-hidden="true"></i>
-    </button>
-  </div></br>
-
-   <div class="button">
-    <button type="button" class="btn btn-info" style="margin-top:-424px; width:300px;">Historia de intrigas
-        &nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp<i class="fa fa-puzzle-piece fa-5x" aria-hidden="true"></i>
-    </button>
-  </div></br>
+  
+  <div id="map"></div>
  
-  <div class="button">
-    <button type="button" class="btn btn-info" style="margin-top:-336px; width:300px;">Historia de amor
-        &nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp<i class="fa fa-heartbeat fa-5x" aria-hidden="true"></i>
-    </button>
-  </div></br>
-  -->
-
-  <!-- screen iniciaton -->
-
 </body>
 </html>

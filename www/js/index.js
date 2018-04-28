@@ -1,21 +1,24 @@
-window.onload = function() {
-  
-  $(document).ready(function(){
-    
-    $("#resultModal").on('show.bs.modal', function () {
+var map;
 
-      $(".modal-title").html( "resultados para " + $("#my_name").val() + " & " + $("#someoneelse_name").val() );
-      
+function initMap() {
+    navigator.geolocation.getCurrentPosition(showPosition);
+}
+
+function showPosition(position) {
+
+    var myLocation = {lat: position.coords.latitude, lng: position.coords.longitude};
+
+    map = new google.maps.Map(document.getElementById('map'), {
+        center: myLocation,
+        zoom: 15
     });
 
-    $("#resultModal").on('hide.bs.modal', function () {
-      $("#my_name").val("");
-      $("#someoneelse_name").val("");
+    var marker = new google.maps.Marker({
+        position: myLocation,
+        map: map
     });
-    
-  });
 
-};
+}
 
 
 

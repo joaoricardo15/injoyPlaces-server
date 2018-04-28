@@ -9,14 +9,14 @@
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/joaoricardo15/Opiniao.git"
+    "url": "git+https://github.com/joaoricardo15/Find.git"
   },
   "author": "Joao R Cardoso",
   "license": "ISC",
   "bugs": {
-    "url": "https://github.com/joaoricardo15/Opiniao/issues"
+    "url": "https://github.com/joaoricardo15/Find/issues"
   },
-  "homepage": "https://github.com/joaoricardo15/Opiniao#readme",
+  "homepage": "https://github.com/joaoricardo15/Find#readme",
   "dependencies": {
     "express": "^4.16.2",
     "http": "0.0.0"
