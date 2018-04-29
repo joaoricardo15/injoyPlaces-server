@@ -1,14 +1,17 @@
 var express = require('express')
   , app = express()
-  , port = 80;
+  , port = 3000;
 
-app.use(express.static('www'));
+app.post('/', function(req, res) {
+    
+        console.log('req: '+req);
+    
+        res.send('hello world');
+    });
 
-
-
-app.listen(port, error => {
-  if(!error)
-    console.log("Express listen to "+port);
-  else
-    console.log("express error: "+error); 
+app.listen(port, function (error) {
+    if(!error)
+        console.log('Find server is listen to port: '+port);
+    else
+        console.log('error on find server inicialization: '+error);
 });

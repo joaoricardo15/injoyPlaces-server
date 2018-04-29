@@ -1,7 +1,7 @@
 {
-  "name": "opiniao",
+  "name": "find_server",
   "version": "1.0.0",
-  "description": "",
+  "description": "find server",
   "main": "server.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
@@ -9,16 +9,12 @@
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/joaoricardo15/Find.git"
+    "url": "git+https://github.com/joaoricardo15/find_server.git"
   },
-  "author": "Joao R Cardoso",
+  "author": "Joao Ricardo Cardoso",
   "license": "ISC",
   "bugs": {
-    "url": "https://github.com/joaoricardo15/Find/issues"
+    "url": "https://github.com/joaoricardo15/find_server/issues"
   },
-  "homepage": "https://github.com/joaoricardo15/Find#readme",
-  "dependencies": {
-    "express": "^4.16.2",
-    "http": "0.0.0"
-  }
+  "homepage": "https://github.com/joaoricardo15/find_server#readme"
 }
