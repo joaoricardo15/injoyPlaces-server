@@ -1,10 +1,12 @@
 var server = true;
 
-var myId = 100;
+var myId = 1000;
 
 var myPosition;
 
 var map;
+
+var updateInterval = 1000;
 
 function initMap() {
     
@@ -17,44 +19,33 @@ function initMap() {
             zoom: 15
         });
 
-        updatePositions(myPosition);
+        uploadMyPosition();
+
+        setInterval(updatePositions, updateInterval);
     });
 }
 
-function updateCurrentPosition(myLocation) {
-    
-    myPosition = {lat: myLocation.coords.latitude, lng: myLocation.coords.longitude};
-
-    map = new google.maps.Map(document.getElementById('map'), {
-        center: myPosition,
-        zoom: 15
-    });
-}
-
-function updatePositions(myPosition)
+function uploadMyPosition()
 {
-    if(server)
+    $.post("http://localhost:3000/positions", 
     {
-        $.get("http://localhost:3000/positions", function(data, status){
-            addMarkers(data);
-        });
-    }
-    else
-    {
-        var myLocation = {
-            id: myId,
-            lat: myPosition.coords.latitude,
-            lng: myPosition.coords.longitude
-        };
-
-        $.post("http://localhost:3000/positions", myLocation, function(data, status){
-            alert(JSON.stringify(data));
-            addMarkers(data);
-        });
-    }
+        id: myId,
+        lat: myPosition.lat,
+        lng: myPosition.lng
+    }, 
+    function(data, status){
+        
+    });
 }
 
-function addMarkers(locations)
+function updatePositions()
+{
+    $.get("http://localhost:3000/positions", function(data, status){
+        updateMarkers(data);
+    });
+}
+
+function updateMarkers(locations)
 {
     for(var location of locations)
     {
@@ -63,7 +54,6 @@ function addMarkers(locations)
                 lat: location["lat"],
                 lng: location["lng"]
             },
-            //icon: 'http://labs.google.com/ridefinder/images/mm_20_blue.png',
             icon: 'images/bart-icon.png',
             map: map
         });

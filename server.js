@@ -7,23 +7,7 @@ var express = require('express')
 app.use(express.static('www'));
 app.use(bodyParser.json());
 
-var positions = [
-    {
-        "id":100,
-        "lat":-30.0288587,
-        "lng": -51.2108967
-    },
-    {
-        "id":200,
-        "lat":-30.0288587,
-        "lng": -51.2208967
-    },
-    {
-        "id":300,
-        "lat":-30.0288587,
-        "lng": -51.2308967
-    }
-];
+var positions = [];
 
 app.post('/positions', function(req, res) {
     
@@ -34,11 +18,16 @@ app.post('/positions', function(req, res) {
     else
         positions.push(req.body);
 
-    res.send(positions);
+    res.send("ok");
 });
 
 app.get('/positions', function(req, res) {
     res.send(positions);
+});
+
+app.delete('/positions', function(req, res) {
+    positions = [];
+    res.send("ok");
 });
 
 app.listen(port, function (error) {
