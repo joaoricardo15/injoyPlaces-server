@@ -1,7 +1,7 @@
 var express = require('express')
   , bodyParser = require('body-parser')
   , app = express()
-  , port = 3000
+  , port = 80
   , geoLocations = [];
 
 app.use(express.static('www'));

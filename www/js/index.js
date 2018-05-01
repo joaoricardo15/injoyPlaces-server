@@ -1,6 +1,6 @@
 var server = true;
 var myId = "Heroi";
-var url = "http://localhost:3000/positions";
+var url = "http://localhost/positions";
 var localPositions = [];
 var updateInterval = 1000;
 var uploadInterval = 1000;
