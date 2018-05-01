@@ -13,6 +13,8 @@ app.post('/positions', function(req, res) {
     
     var index = positions.findIndex(position => position.id === req.body["id"]);
 
+    console.log('req: ',req.body);
+
     if(index > -1)
         positions[index] = req.body;
     else
