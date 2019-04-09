@@ -1,8 +1,7 @@
 var server = true;
-var url = "localhost/positions";
+var url = "https://injoyserver.azurewebsites.net/positions";
 var localPositions = [];
 var updateInterval = 5000;
-var minimumPrecision = 0.0001;
 var map;
 
 function initMap() {
