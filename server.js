@@ -53,6 +53,17 @@ app.delete('/positions', function(req, res) {
     res.send("ok");
 });
 
+process.argv.forEach((val, index, array) => {
+    if (val === 'local') {
+        envMode = env.Local;
+    }
+});
+  
+if (envMode === env.Local)
+    port = 80;
+else
+    port = process.env.PORT;
+
 app.listen(port, function (error) {
     if(!error)
         console.log('Find server is listen to port: '+port);
