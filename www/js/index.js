@@ -1,5 +1,5 @@
-var url = "https://injoyserver.azurewebsites.net/positions";
-var map;
+var url = "https://injoyserver.azurewebsites.net/positions"
+var map
 
 function initMap() {
     $.ajax({
@@ -17,14 +17,15 @@ function initMap() {
                 map = new google.maps.Map(document.getElementById('map'), {
                     center: lastPosition,
                     zoom: 15
-                });
+                })
 
                 addMarkers(users)
+
             } else {
                 alert("não há dados de localização a serem apresentados")
             }
         }
-    });
+    })
 }
 
 function addMarkers(users)
@@ -33,26 +34,30 @@ function addMarkers(users)
     {
         for(var location of user.locations)
         {
-            let openstreetmapUrl = "https://nominatim.openstreetmap.org/reverse?lat="+location.lat+"&lon="+location.lng+"&format=json"
-
-            $.ajax({
-                url: openstreetmapUrl,
-                type: "GET",
-                dataType: "json",
-                contentType: "application/json; charset=utf-8",
-                success: function(local, status){
-                    var marker = new google.maps.Marker({
-                        title: user.user + ' está em: ' + local.display_name.split(',')[0],
-                        position: {
-                            lat: location.lat,
-                            lng: location.lng
-                        },
-                        //icon: 'images/bart-icon.png',
-                        animation: google.maps.Animation.DROP,
-                        map: map
-                    });
-                }
-            });
+            addMarker(user.user, location.lat, location.lng);
         }
     }
+}
+
+function addMarker(user, lat, lng) {
+    let openstreetmapUrl = "https://nominatim.openstreetmap.org/reverse?lat="+lat+"&lon="+lng+"&format=json"
+
+    $.ajax({
+        url: openstreetmapUrl,
+        type: "GET",
+        dataType: "json",
+        contentType: "application/json; charset=utf-8",
+        success: function(local, status){
+            new google.maps.Marker({
+                title: user + ' está em: ' + local.display_name.split(',')[0],
+                position: {
+                    lat: lat,
+                    lng: lng
+                },
+                //icon: 'images/bart-icon.png',
+                animation: google.maps.Animation.DROP,
+                map: map
+            })  
+        }
+    })
 }

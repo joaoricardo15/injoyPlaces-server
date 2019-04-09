@@ -5,36 +5,36 @@ var express = require('express')
   , envMode = env.Azure
   , port
 
-app.use(express.static('www'));
-app.use(bodyParser.json());
+app.use(express.static('www'))
+app.use(bodyParser.json())
 app.use(function(req, res, next) {
-    res.header("Access-Control-Allow-Origin", "*");
-    res.header("Access-Control-Allow-Headers", "Origin, X-Requested-With, Content-Type, Accept");
-    next();
+    res.header("Access-Control-Allow-Origin", "*")
+    res.header("Access-Control-Allow-Headers", "Origin, X-Requested-With, Content-Type, Accept")
+    next()
 });    
 
-var maxPositionsPerUser = 200;
-var minimumPrecision = 0.001;
-var userPositions = [];
+var maxPositionsPerUser = 200
+var minimumPrecision = 0.001
+var userPositions = []
 
 app.post('/positions', function(req, res) {
     
     let newPosition = req.body[0]
 
-    let index = userPositions.findIndex(userPosition => userPosition.user === newPosition["user"]);
+    let index = userPositions.findIndex(userPosition => userPosition.user === newPosition["user"])
 
     if(index > -1) {
 
         user = userPositions[index]
 
-        if(Math.abs(newPosition.lng - user.locations[user.locations.length - 1].lng) > minimumPrecision || Math.abs(newPosition.lat - user.locations[user.locations.length - 1].lat) > minimumPrecision)
+        //if(Math.abs(newPosition.lng - user.locations[user.locations.length - 1].lng) > minimumPrecision || Math.abs(newPosition.lat - user.locations[user.locations.length - 1].lat) > minimumPrecision)
         {
             if (user.locations.length >= maxPositionsPerUser) {
-                user.locations.push({ lng: newPosition.lng, lat: newPosition.lat});
+                user.locations.push({ lng: newPosition.lng, lat: newPosition.lat})
                 user.locations.splice(0, 1)
             }
             else {
-                user.locations.push({ lng: newPosition.lng, lat: newPosition.lat});
+                user.locations.push({ lng: newPosition.lng, lat: newPosition.lat})
             }
         }
     }
@@ -47,28 +47,28 @@ app.post('/positions', function(req, res) {
 });
 
 app.get('/positions', function(req, res) {
-    res.send(userPositions);
+    res.send(userPositions)
 });
 
 app.delete('/positions', function(req, res) {
-    userPositions = [];
-    res.send("ok");
-});
+    userPositions = []
+    res.send("ok")
+})
 
 process.argv.forEach((val, index, array) => {
     if (val === 'local') {
-        envMode = env.Local;
+        envMode = env.Local
     }
-});
+})
   
 if (envMode === env.Local)
-    port = 80;
+    port = 80
 else
-    port = process.env.PORT;
+    port = process.env.PORT
 
 app.listen(port, function (error) {
     if(!error)
-        console.log('Find server is listen to port: '+port);
+        console.log('Find server is listen to port: '+port)
     else
-        console.log('error on find server inicialization: '+error);
-});
+        console.log('error on find server inicialization: '+error)
+})
