@@ -9,7 +9,7 @@ function initMap() {
         contentType: "application/json; charset=utf-8",
         success: function(users, status){
             
-            if (usersusers.length >= 1)
+            if (users.length >= 1)
             {
                 lastUser = users[users.length - 1]
                 lastPosition = lastUser.locations[lastUser.locations.length - 1]    
