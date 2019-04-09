@@ -12,28 +12,44 @@ app.use(function(req, res, next) {
     next();
 });    
 
-var positions = [];
+var maxPositionsPerUser = 100;
+var userPositions = [{ user: 'init', locations: [{ lng: -51.2206984, lat: -30.0390159 }]}];
 
 app.post('/positions', function(req, res) {
     
-    var index = positions.findIndex(position => position.id === req.body["id"]);
+    var index = userPositions.findIndex(userPosition => userPosition.user === req.body["user"]);
 
-    console.log('req: ',req.body);
+    console.log('req: ', req.body);
 
-    if(index > -1)
-        positions[index] = req.body;
+    if(index > -1) {
+
+        user = userPositions[index]
+
+        if(Math.abs(req.body.lng - user.locations[user.locations.length - 1].lng) > minimumPrecision || Math.abs(req.body.lat - user.locations[user.locations.length - 1].lat) > minimumPrecision)
+        {
+            if (user.locations.length >= maxPositionsPerUser) {
+                user.locations.push({ lng: req.body.lng, lat: req.body.lat});
+                user.locations.splice(0, 1)
+            }
+            else {
+                user.locations.push({ lng: req.body.lng, lat: req.body.lat});
+            }
+        }
+    }
     else
-        positions.push(req.body);
+        userPositions.push({ user: req.body.user, locations: [{ lng: req.body.lng, lat: req.body.lat }]});
 
-    res.send("ok");
+    res.send({
+        message: 'É uz Guri'
+    });
 });
 
 app.get('/positions', function(req, res) {
-    res.send(positions);
+    res.send(userPositions);
 });
 
 app.delete('/positions', function(req, res) {
-    positions = [];
+    userPositions = [];
     res.send("ok");
 });
 
