@@ -11,15 +11,30 @@ function initMap() {
         type: "GET",
         dataType: "json",
         contentType: "application/json; charset=utf-8",
-        success: function(positions, status){
+        success: function(users, status){
+            
+            lastUser = users[users.length - 1]
+            lastPosition = lastUser.locations[lastUser.locations.length - 1]
+            
             map = new google.maps.Map(document.getElementById('map'), {
-                center: positions[positions.length - 1].locations[positions[positions.length - 1].locations.length - 1],
+                center: lastPosition,
                 zoom: 15
+            });
+
+            var marker = new google.maps.Marker({
+                title: 'Nome do herói: '+lastUser.user,
+                position: {
+                    lat: lastPosition.lat,
+                    lng: lastPosition.lng
+                },
+                icon: 'images/bart-icon.png',
+                animation: google.maps.Animation.DROP,
+                map: map
             });
         }
     });
 
-    setInterval(updatePositions, updateInterval);
+    //setInterval(updatePositions, updateInterval);
 }
 
 function updatePositions()

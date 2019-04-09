@@ -1,5 +1,5 @@
 {
-  "name": "find_server",
+  "name": "injoy_server",
   "version": "1.0.0",
   "description": "find server",
   "main": "server.js",
@@ -9,12 +9,15 @@
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/joaoricardo15/find_server.git"
+    "url": "git+https://github.com/joaoricardo15/InJoy_serverTest.git"
   },
   "author": "Joao Ricardo Cardoso",
   "license": "ISC",
   "bugs": {
-    "url": "https://github.com/joaoricardo15/find_server/issues"
+    "url": "https://github.com/joaoricardo15/InJoy_serverTest/issues"
   },
-  "homepage": "https://github.com/joaoricardo15/find_server#readme"
+  "homepage": "https://github.com/joaoricardo15/InJoy_serverTest#readme",
+  "dependencies": {
+    "express": "^4.16.4"
+  }
 }
