@@ -36,9 +36,8 @@ function addMarkers(users)
                 dataType: "json",
                 contentType: "application/json; charset=utf-8",
                 success: function(local, status){
-                    
                     var marker = new google.maps.Marker({
-                        title: user.user + 'está em: ' + local.display_name.split(',')[0],
+                        title: user.user + ' está em: ' + local.display_name.split(',')[0],
                         position: {
                             lat: location.lat,
                             lng: location.lng
