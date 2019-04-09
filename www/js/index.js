@@ -1,5 +1,5 @@
 var server = true;
-var url = "http://localhost/positions";
+var url = "https://localhost/positions";
 var localPositions = [];
 var updateInterval = 5000;
 var minimumPrecision = 0.0001;
