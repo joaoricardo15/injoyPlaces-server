@@ -15,25 +15,16 @@ function initMap() {
             lastUser = users[users.length - 1]
             lastPosition = lastUser.locations[lastUser.locations.length - 1]    
             
-            // map = new google.maps.Map(document.getElementById('map'), {
-            //     center: lastPosition,
-            //     zoom: 15
-            // });
+            map = new google.maps.Map(document.getElementById('map'), {
+                center: lastPosition,
+                zoom: 15
+            });
 
-            // var marker = new google.maps.Marker({
-            //     title: 'Nome do herói: '+lastUser.user,
-            //     position: {
-            //         lat: lastPosition.lat,
-            //         lng: lastPosition.lng
-            //     },
-            //     icon: 'images/bart-icon.png',
-            //     animation: google.maps.Animation.DROP,
-            //     map: map
-            // });
+            updateMarkers(users)
         }
     });
 
-    setInterval(updatePositions, updateInterval);
+    //setInterval(updatePositions, updateInterval);
 }
 
 function updatePositions()
@@ -44,8 +35,7 @@ function updatePositions()
         dataType: "json",
         contentType: "application/json; charset=utf-8",
         success: function(data, status){
-            //updateMarkers(data)
-            alert('data from server: ' + JSON.stringify(data))
+            updateMarkers(data)
         }
     });
 }
