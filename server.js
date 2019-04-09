@@ -4,8 +4,6 @@ var express = require('express')
   , env = { Local: 0, Azure: 1 }
   , envMode = env.Azure
   , port
-  , minimumPrecision = 0.001
-  , geoLocations = [];
 
 app.use(express.static('www'));
 app.use(bodyParser.json());
@@ -15,12 +13,11 @@ app.use(function(req, res, next) {
     next();
 });    
 
-var maxPositionsPerUser = 100;
-var userPositions = [{ user: 'init', locations: [{ lng: -51.2206984, lat: -30.0390159 }]}];
+var maxPositionsPerUser = 200;
+var minimumPrecision = 0.001;
+var userPositions = [];
 
 app.post('/positions', function(req, res) {
-    
-    console.log('req: ', req.body[0]);
     
     let newPosition = req.body[0]
 
@@ -30,7 +27,7 @@ app.post('/positions', function(req, res) {
 
         user = userPositions[index]
 
-        //if(Math.abs(newPosition.lng - user.locations[user.locations.length - 1].lng) > minimumPrecision || Math.abs(newPosition.lat - user.locations[user.locations.length - 1].lat) > minimumPrecision)
+        if(Math.abs(newPosition.lng - user.locations[user.locations.length - 1].lng) > minimumPrecision || Math.abs(newPosition.lat - user.locations[user.locations.length - 1].lat) > minimumPrecision)
         {
             if (user.locations.length >= maxPositionsPerUser) {
                 user.locations.push({ lng: newPosition.lng, lat: newPosition.lat});

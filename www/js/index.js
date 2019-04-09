@@ -9,15 +9,20 @@ function initMap() {
         contentType: "application/json; charset=utf-8",
         success: function(users, status){
             
-            lastUser = users[users.length - 1]
-            lastPosition = lastUser.locations[lastUser.locations.length - 1]    
-            
-            map = new google.maps.Map(document.getElementById('map'), {
-                center: lastPosition,
-                zoom: 15
-            });
+            if (usersusers.length >= 1)
+            {
+                lastUser = users[users.length - 1]
+                lastPosition = lastUser.locations[lastUser.locations.length - 1]    
+                
+                map = new google.maps.Map(document.getElementById('map'), {
+                    center: lastPosition,
+                    zoom: 15
+                });
 
-            addMarkers(users)
+                addMarkers(users)
+            } else {
+                alert("não há dados de localização a serem apresentados")
+            }
         }
     });
 }
