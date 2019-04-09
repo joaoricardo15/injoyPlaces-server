@@ -20,28 +20,29 @@ var userPositions = [{ user: 'init', locations: [{ lng: -51.2206984, lat: -30.03
 
 app.post('/positions', function(req, res) {
     
-    var index = userPositions.findIndex(userPosition => userPosition.user === req.body["user"]);
+    console.log('req: ', req.body[0]);
+    
+    let newPosition = req.body[0]
 
-    console.log('req: ', req.body);
+    let index = userPositions.findIndex(userPosition => userPosition.user === newPosition["user"]);
 
     if(index > -1) {
 
         user = userPositions[index]
 
-        if(Math.abs(req.body.lng - user.locations[user.locations.length - 1].lng) > minimumPrecision || Math.abs(req.body.lat - user.locations[user.locations.length - 1].lat) > minimumPrecision)
+        if(Math.abs(newPosition.lng - user.locations[user.locations.length - 1].lng) > minimumPrecision || Math.abs(newPosition.lat - user.locations[user.locations.length - 1].lat) > minimumPrecision)
         {
             if (user.locations.length >= maxPositionsPerUser) {
-                user.locations.push({ lng: req.body.lng, lat: req.body.lat});
+                user.locations.push({ lng: newPosition.lng, lat: newPosition.lat});
                 user.locations.splice(0, 1)
             }
             else {
-                user.locations.push({ lng: req.body.lng, lat: req.body.lat});
+                user.locations.push({ lng: newPosition.lng, lat: newPosition.lat});
             }
         }
     }
     else
-        //userPositions.push({ user: req.body.user, locations: [{ lng: req.body.lng, lat: req.body.lat }]});
-        userPositions.push(req.body);
+        userPositions.push({ user: newPosition.user, locations: [{ lng: newPosition.lng, lat: newPosition.lat }]});
 
     res.send({
         message: 'É uz Guri'
