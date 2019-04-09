@@ -4,6 +4,7 @@ var express = require('express')
   , env = { Local: 0, Azure: 1 }
   , envMode = env.Azure
   , port
+  , minimumPrecision = 0.0001
   , geoLocations = [];
 
 app.use(express.static('www'));
@@ -39,7 +40,8 @@ app.post('/positions', function(req, res) {
         }
     }
     else
-        userPositions.push({ user: req.body.user, locations: [{ lng: req.body.lng, lat: req.body.lat }]});
+        //userPositions.push({ user: req.body.user, locations: [{ lng: req.body.lng, lat: req.body.lat }]});
+        userPositions.push(req.body);
 
     res.send({
         message: 'É uz Guri'
