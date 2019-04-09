@@ -28,7 +28,7 @@ function addMarkers(users)
     {
         for(var location of user.locations)
         {
-            let openstreetmapUrl = "http://nominatim.openstreetmap.org/reverse?lat="+location.lat+"&lon="+location.lng+"&format=json"
+            let openstreetmapUrl = "https://nominatim.openstreetmap.org/reverse?lat="+location.lat+"&lon="+location.lng+"&format=json"
 
             $.ajax({
                 url: openstreetmapUrl,
