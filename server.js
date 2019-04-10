@@ -14,8 +14,26 @@ app.use(function(req, res, next) {
 });    
 
 var maxPositionsPerUser = 200
-var minimumPrecision = 0.001
 var userPositions = []
+
+/*/////////////////// Conversão de precisão em graus para distancia /////////////////////
+
+    1grau latitude = 111.12Km
+    
+    1grau longitude = 111.12km * cos(latitude) 
+    
+    nossa latitude = +- -30grau -> cos(-30) = +- 0.87
+
+    -> para uma area quadrada de 20m:
+    
+    20m correspondem a +- 0.00018 graus de latitude
+    
+    20m correspondem a +- 0.00021 graus de longitude
+
+/////////////////////////////////////////////////////////////////////////////////////////*/
+
+var latitudeThreshold = 0.00018
+var longitudeThreshold = 0.00021
 
 app.post('/positions', function(req, res) {
     
@@ -27,19 +45,19 @@ app.post('/positions', function(req, res) {
 
         user = userPositions[index]
 
-        //if(Math.abs(newPosition.lng - user.locations[user.locations.length - 1].lng) > minimumPrecision || Math.abs(newPosition.lat - user.locations[user.locations.length - 1].lat) > minimumPrecision)
-        {
-            if (user.locations.length >= maxPositionsPerUser) {
-                user.locations.push({ lng: newPosition.lng, lat: newPosition.lat})
-                user.locations.splice(0, 1)
-            }
-            else {
-                user.locations.push({ lng: newPosition.lng, lat: newPosition.lat})
-            }
+        user.locations.push({ lng: newPosition.lng, lat: newPosition.lat})
+
+        if (user.locations.length >= maxPositionsPerUser) {
+            user.locations.splice(0, 1)
+        }
+
+        if (Math.abs(newPosition.lat - user.locations[user.locations.length - 1].lat) > latitudeThreshold ||
+            Math.abs(newPosition.lng - user.locations[user.locations.length - 1].lng) > longitudeThreshold) {
+            user.locals.push({ lng: newPosition.lng, lat: newPosition.lat})
         }
     }
     else
-        userPositions.push({ user: newPosition.user, locations: [{ lng: newPosition.lng, lat: newPosition.lat }]});
+        userPositions.push({ user: newPosition.user, locations: [{ lng: newPosition.lng, lat: newPosition.lat }], locals: []});
 
     res.send({
         message: 'É uz Guri'
