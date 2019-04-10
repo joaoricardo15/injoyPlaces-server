@@ -51,8 +51,9 @@ app.post('/positions', function(req, res) {
             user.locations.splice(0, 1)
         }
 
-        if (Math.abs(newPosition.lat - user.locations[user.locations.length - 1].lat) > latitudeThreshold ||
-            Math.abs(newPosition.lng - user.locations[user.locations.length - 1].lng) > longitudeThreshold) {
+        if (user.locals.length == 0 || 
+            Math.abs(newPosition.lat - user.locals[user.locals.length - 1].lat) > latitudeThreshold ||
+            Math.abs(newPosition.lng - user.locals[user.locals.length - 1].lng) > longitudeThreshold) {
             user.locals.push({ lng: newPosition.lng, lat: newPosition.lat})
         }
     }
