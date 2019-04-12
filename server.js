@@ -58,14 +58,14 @@ function addLocation(position) {
 
 	let index = userPositions.findIndex(userPosition => userPosition.user === position.user)
 
-	let now = Date.now()
+	let timeStamp = position['timeStamp'] ? position['timeStamp'] : Date.now()
 
 	if(index < 0) {
-		userPositions.push({ user: position.user, currentLocal: { arrival: now, lng: position.lng, lat: position.lat, samples: 1, departure: null }, locations: [{ lng: position.lng, lat: position.lat, timeStamp: now}], locals: []});
+		userPositions.push({ user: position.user, currentLocal: { arrival: timeStamp, lng: position.lng, lat: position.lat, samples: 1, departure: null }, locations: [{ lng: position.lng, lat: position.lat, timeStamp: timeStamp}], locals: []});
 	}
 	else {
 			let user = userPositions[index]
-			user.locations.push({ lng: position.lng, lat: position.lat , timeStamp: now})
+			user.locations.push({ lng: position.lng, lat: position.lat , timeStamp: timeStamp})
 			if (user.locations.length > maxPositionsPerUser) {
 				user.locations.splice(0, 1)
 			}
@@ -80,7 +80,7 @@ function addLocation(position) {
 					user.currentLocal.lat = (lastLatitude*user.currentLocal.samples + position.lat) / (user.currentLocal.samples + 1)
 					user.currentLocal.lng = (lastLongitude*user.currentLocal.samples + position.lng) / (user.currentLocal.samples + 1)
 					user.currentLocal.samples++
-					user.currentLocal.departure = now
+					user.currentLocal.departure = timeStamp
 
 					let elapsedTime = user.currentLocal.departure - user.currentLocal.arrival
 					
@@ -94,21 +94,21 @@ function addLocation(position) {
 									longitudeDifference = Math.abs(user.currentLocal.lng - user.locals[user.locals.length-1].lng)
 
 									if (latitudeDifference < latitudeThreshold && longitudeDifference < longitudeThreshold) {
-											user.locals[user.locals.length-1].departure = now
+											user.locals[user.locals.length-1].departure = new Date(timeStamp)
 									}
 									else {
 											user.locals.push(newLocal)
-											user.currentLocal = { arrival: now, lng: position.lng, lat: position.lat, samples: 1, departure: null }
+											user.currentLocal = { arrival: timeStamp, lng: position.lng, lat: position.lat, samples: 1, departure: null }
 									}
 							}
 							else {
 									user.locals.push(newLocal)
-									user.currentLocal = { arrival: now, lng: position.lng, lat: position.lat, samples: 1, departure: null }
+									user.currentLocal = { arrival: timeStamp, lng: position.lng, lat: position.lat, samples: 1, departure: null }
 							}
 					}
 			}
 			else {
-					user.currentLocal = { arrival: now, lng: position.lng, lat: position.lat, samples: 1, departure: null }
+					user.currentLocal = { arrival: timeStamp, lng: position.lng, lat: position.lat, samples: 1, departure: null }
 			}
 	}
 }
