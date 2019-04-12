@@ -37,8 +37,10 @@ var longitudeThreshold = 0.00042
 var localMinimunInterval = 600
 
 app.post('/positions', function(req, res) {
-		
-		addLocation(req.body[0])
+	
+	for (let i = 0; i < req.body.length; i++) {
+		addLocation(req.body[i])
+	}
 		
     res.send({ message: 'É uz Guri' })
 })
