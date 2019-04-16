@@ -9,7 +9,7 @@ function initMap() {
         contentType: "application/json; charset=utf-8",
         success: function(users, status){
             
-            if (users.length >= 1)
+            if (users.length > 0)
             {
                 lastUser = users[users.length - 1]
                 lastPosition = lastUser.locations[lastUser.locations.length - 1]    
@@ -19,17 +19,20 @@ function initMap() {
                     zoom: 15
                 })
 
-                for(var location of lastUser.locations)
-                {
-                    addMarker(lastUser.user, location.lat, location.lng);
-                }
+								for (var user of users) {
 
-                if (lastUser.locals.length >= 1) {
-                    for(var local of lastUser.locals)
-                    {
-                        addBart(lastUser.user, local.arrival, local.departure, local.lat, local.lng);
-                    }
-                }
+									for(var location of user.locations)
+									{
+											addMarker(user.user, location.lat, location.lng);
+									}
+
+									if (user.locals.length > 0) {
+											for(var local of user.locals)
+											{
+													addBart(user.user, local.arrival, local.departure, local.lat, local.lng);
+											}
+									}
+								}
 
             } else {
                 alert("não há dados de localização a serem apresentados")
