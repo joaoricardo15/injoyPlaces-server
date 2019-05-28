@@ -18,6 +18,8 @@
   },
   "homepage": "https://github.com/joaoricardo15/InJoy_serverTest#readme",
   "dependencies": {
-    "express": "^4.16.4"
+    "express": "^4.16.4",
+    "mongoose": "^5.5.11",
+    "multer": "^1.4.1"
   }
 }
