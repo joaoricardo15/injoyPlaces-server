@@ -42,34 +42,6 @@ app.post('/positions', function(req, res) {
     res.send({ message: 'É uz Guri' })
 })
 
-//var multer = require('multer');
-//var upload = multer({ dest: '/tmp' })
-
-var role = { name: null, pic: null }
-
-app.post('/roles', (req, res) => { 
-	role.name = req.body.name
-	role.pic = req.body.pic
-	console.log('name: ' + role.name)
-
-	let newRole = new RoleModel(req.body)
-
-	newRole.save(function(err) { if (err) throw err })
-
-	res.send({ message: "Éh uz Guri"})
-})
-
-app.get('/roles', function(request, response) {
-	RoleModel.find({ name: 'ehUzGuri' }, function(err, res) {
-		if (res) {
-			let role = res[0]
-			response.send(role)
-		}
-		else if (err)
-			console.log('res: ' + err)
-	});
-})
-
 app.get('/positions', function(req, res) {
     res.send(userPositions)
 })
@@ -138,6 +110,27 @@ function addLocation(position) {
 	}
 }
 
+
+app.post('/roles', (req, res) => { 
+
+	let newRole = new RoleModel(req.body)
+
+	newRole.save(function(err) { if (err) throw err })
+
+	res.send({ message: "Éh uz Guri"})
+})
+
+app.get('/roles', function(request, response) {
+	RoleModel.find({}, function(err, res) { 
+		if (res) {
+			response.send(res)
+		}
+		else if (err)
+			console.log('res: ' + err)
+	});
+})
+
+
 process.argv.forEach((val, index, array) => {
     if (val === 'local') {
         envMode = env.Local
@@ -171,21 +164,43 @@ mongoose.connect('mongodb://injoyserver:Yjjbr7SeP03oIKbHgvRAvO8lzEB4U2NNlPGx9IDI
 
 var db = mongoose.connection;
 db.on('error', console.error.bind(console, 'connection error:'));
-db.once('open', function() {
-  console.log('connected to mongo');
-});
+db.once('open', function() { console.log('connected to mongo') });
+
+var imgSchema = mongoose.Schema({ data: Buffer, contentType: String })
+var ImgModel = mongoose.model('img', imgSchema);
+var locationSchema = mongoose.Schema({ lat: String, lng: String })
+var LocationModel = mongoose.model('location', locationSchema);
 
 var roleSchema = mongoose.Schema({
-    name: String,
-	img: { data: Buffer, contentType: String }
+	name: String,
+	ratting: Number,
+	location: locationSchema,
+	address: String,
+	pic: imgSchema,
+	pics: [ imgSchema ],
+	coments: [ String ],
+	tags: [ String ]
 });
 
 var RoleModel = mongoose.model('role', roleSchema);
 
-var imgPath = './bart-icon.png';
+var imgPath = './images/bart-icon.png';
 
-var ap11 = new RoleModel({name: 'ehUzGuri', img: { data: file.readFileSync(imgPath), contentType: 'image/png' } });
+const img1 = file.readFileSync("./images/bars/ap11.jpg")
+const img2 = file.readFileSync("./images/bars/redDoor.jpg")
+const img3 = file.readFileSync("./images/bars/void.jpg")
 
-// ap11.save(function(err) {
-// 	if (err) throw err;
-// });
+var ap11 = new RoleModel({
+	name: 'Ap11',
+	ratting: 5,
+	location: { lat: -30.039171, lng: -51.220676 },
+	address: 'R. General Lima e Silva, 697 - Cidade Baixa, Porto Alegre - RS',
+	pics: [],
+	pic: { data: img1, contentType: 'image/jpg' },
+	coments: ["Gente fina elegante e sincera", "Lugar maneiro e serviço da hora", "Musica massa, comida meia boca", "Gente fina elegante e sincera", "Lugar maneiro e serviço da hora", "Musica massa, comida meia boca"],
+	tags: ['ApDuzGuri', 'zueira', 'tendel']
+})
+	
+ap11.save(function(err) {
+	if (err) throw err;
+});
