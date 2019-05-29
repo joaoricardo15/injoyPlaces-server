@@ -52,7 +52,7 @@ app.post('/roles', (req, res) => {
 	role.pic = req.body.pic
 	console.log('name: ' + role.name)
 
-	let newRole = new RoleModel({name: req.body.name, img: { data: req.body.pic, contentType: 'image/png' } });
+	let newRole = new RoleModel(req.body)
 
 	newRole.save(function(err) { if (err) throw err })
 
@@ -60,20 +60,13 @@ app.post('/roles', (req, res) => {
 })
 
 app.get('/roles', function(request, response) {
-	RoleModel.find({ name: 'Ap11' }, function(err, res) {
+	RoleModel.find({ name: 'ehUzGuri' }, function(err, res) {
 		if (res) {
 			let role = res[0]
-			console.log('role name: ' + role.name)
-			//response.contentType(role.img.contentType)
-			//response.send(role.img.data)
-			//response.send(file.readFileSync(imgPath))
-			response.send({
-				name: role.name,
-				img: file.readFileSync(imgPath)
-			})
+			response.send(role)
 		}
 		else if (err)
-	      console.log('res: ' + err)
+			console.log('res: ' + err)
 	});
 })
 
@@ -191,7 +184,7 @@ var RoleModel = mongoose.model('role', roleSchema);
 
 var imgPath = './bart-icon.png';
 
-var ap11 = new RoleModel({name: 'ap11', img: { data: file.readFileSync(imgPath), contentType: 'image/png' } });
+var ap11 = new RoleModel({name: 'ehUzGuri', img: { data: file.readFileSync(imgPath), contentType: 'image/png' } });
 
 // ap11.save(function(err) {
 // 	if (err) throw err;
