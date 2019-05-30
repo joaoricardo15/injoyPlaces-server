@@ -51,6 +51,10 @@ app.delete('/positions', function(req, res) {
     res.send("ok")
 })
 
+
+
+var imageDataURI = require('image-data-uri')
+
 function addLocation(position) {
 
 	let index = userPositions.findIndex(userPosition => userPosition.user === position.user)
@@ -111,13 +115,20 @@ function addLocation(position) {
 }
 
 
-app.post('/roles', (req, res) => { 
+app.post('/role', (req, res) => { 
 
-	let newRole = new RoleModel(req.body)
+	req.body.pic.data = imageDataURI.decode('data:'+req.body.pic.contentType+';base64,'+req.body.pic.data).dataBuffer
 
-	newRole.save(function(err) { if (err) throw err })
-
-	res.send({ message: "Éh uz Guri"})
+	RoleModel.find({ name: req.body.name }, function(err, res) { 
+		if (res.length == 0) {
+			let newRole = new RoleModel(req.body)
+			newRole.save(function(err) { if (err) throw err })
+		}
+		else if (err) {
+			console.log('res: ' + err)
+		}
+		res.send({ message: "Éh uz Guri"})
+	});
 })
 
 app.get('/roles', function(request, response) {
@@ -137,10 +148,10 @@ process.argv.forEach((val, index, array) => {
     }
 })
   
-//if (envMode === env.Local)
+if (envMode === env.Local)
     port = 1000
-//else
-    //port = process.env.PORT
+else
+    port = process.env.PORT
 
 app.listen(port, function (error) {
     if(!error)
@@ -167,9 +178,7 @@ db.on('error', console.error.bind(console, 'connection error:'));
 db.once('open', function() { console.log('connected to mongo') });
 
 var imgSchema = mongoose.Schema({ data: Buffer, contentType: String })
-var ImgModel = mongoose.model('img', imgSchema);
 var locationSchema = mongoose.Schema({ lat: String, lng: String })
-var LocationModel = mongoose.model('location', locationSchema);
 
 var roleSchema = mongoose.Schema({
 	name: String,
@@ -184,23 +193,36 @@ var roleSchema = mongoose.Schema({
 
 var RoleModel = mongoose.model('role', roleSchema);
 
-var imgPath = './images/bart-icon.png';
-
-const img1 = file.readFileSync("./images/bars/ap11.jpg")
-const img2 = file.readFileSync("./images/bars/redDoor.jpg")
-const img3 = file.readFileSync("./images/bars/void.jpg")
-
-var ap11 = new RoleModel({
+var ap11Model = new RoleModel({
 	name: 'Ap11',
 	ratting: 5,
 	location: { lat: -30.039171, lng: -51.220676 },
 	address: 'R. General Lima e Silva, 697 - Cidade Baixa, Porto Alegre - RS',
 	pics: [],
-	pic: { data: img1, contentType: 'image/jpg' },
-	coments: ["Gente fina elegante e sincera", "Lugar maneiro e serviço da hora", "Musica massa, comida meia boca", "Gente fina elegante e sincera", "Lugar maneiro e serviço da hora", "Musica massa, comida meia boca"],
-	tags: ['ApDuzGuri', 'zueira', 'tendel']
+	pic: { data: file.readFileSync("./images/bars/ap11.jpg"), contentType: 'image/jpg' },
+	coments: [],
+	tags: []
 })
-	
-ap11.save(function(err) {
-	if (err) throw err;
-});
+var redDoor = new RoleModel({
+    name: 'Red Door',
+    ratting: 4,
+    location: { latitude: -30.041674, longitude: -51.221539 },
+    address: 'R. José do Patrocínio, 797 - Cidade Baixa, Porto Alegre - RS',
+	pics: [],
+	pic: { data: file.readFileSync("./images/bars/redDoor.jpg"), contentType: 'image/jpg' },
+    coments: [],
+    tags: []
+})
+var voidModel = new RoleModel({
+    name: 'Void',
+    ratting: 3,
+    location: { latitude: -30.024672, longitude: -51.203145 },
+	address: 'R. Luciana de Abreu, 364 - Moinhos de Vento, Porto Alegre - RS',
+	pics: [],
+    pic: { data: file.readFileSync("./images/bars/void.jpg"), contentType: 'image/jpg' },
+    coments: [],
+    tags: []
+})
+// ap11Model.save(function(err) { if (err) throw err })
+// redDoor.save(function(err) { if (err) throw err })
+// voidModel.save(function(err) { if (err) throw err })
