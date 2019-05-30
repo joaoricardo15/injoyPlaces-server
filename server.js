@@ -1,14 +1,14 @@
 var express = require('express')
-  , file = require('fs')
-  , bodyParser = require('body-parser')
   , imageDataURI = require('image-data-uri')
+  , bodyParser = require('body-parser')
+  , file = require('fs')
   , app = express()
   , env = { Local: 0, Azure: 1 }
   , envMode = env.Azure
   , port
 
 app.use(express.static('www'))
-app.use(bodyParser.json({limit: '5mb'})) //app.use(bodyParser.urlencoded({ extended: false }))
+app.use(bodyParser.json({limit: '10mb'})) 
 app.use(function(req, res, next) {
     res.header("Access-Control-Allow-Origin", "*")
     res.header("Access-Control-Allow-Headers", "Origin, X-Requested-With, Content-Type, Accept")
@@ -51,8 +51,6 @@ app.delete('/positions', function(req, res) {
     userPositions = []
     res.send("ok")
 })
-
-
 
 function addLocation(position) {
 
@@ -113,49 +111,13 @@ function addLocation(position) {
 	}
 }
 
-app.post('/role', (req, res) => { 
-
-	req.body.pic.data = imageDataURI.decode('data:'+req.body.pic.contentType+';base64,'+req.body.pic.data).dataBuffer
-
-	RoleModel.find({ name: req.body.name }, function(err, roles) { 
-		if (roles.length == 0) {
-			let newRole = new RoleModel(req.body)
-			newRole.save(function(err) { if (err) throw err })
+app.get('/myExperiences', function(request, response) {
+	ExperienceModel.find({ user: request.query.user }, function(err, res) { 
+		if (res) {
+			response.send(res)
 		}
-		else if (err) {
+		else if (err)
 			console.log('res: ' + err)
-		}
-		res.send({ message: "Éh uz Guri"})
-	});
-})
-
-app.post('/experience', (req, res) => { 
-
-	req.body.pic.data = imageDataURI.decode('data:'+req.body.pic.contentType+';base64,'+req.body.pic.data).dataBuffer
-
-	req.body['user'] = 'dao'
-
-	let newExperience = new ExperienceModel(req.body)
-	newExperience.save(function(err) { if (err) throw err })
-
-	RoleModel.find({ name: req.body.name }, function(err, roles) { 
-		if (roles.length == 0) {
-			let newRole = new RoleModel({
-				name: req.body.name,
-				ratting: req.body.ratting,
-				location: req.body.location,
-				address: req.body.location,
-				pic: req.body.pic,
-				pics: [],
-				comments: [ req.body.comment ],
-				tags: [ req.body.tag ]
-			})
-			newRole.save(function(err) { if (err) throw err })
-		}
-		else if (err) {
-			console.log('res: ' + err)
-		}
-		res.send({ message: "Éh uz Guri"})
 	});
 })
 
@@ -169,13 +131,62 @@ app.get('/roles', function(request, response) {
 	});
 })
 
-app.get('/experiences', function(request, response) {
-	ExperienceModel.find({}, function(err, res) { 
+app.get('/possibleRoles', function(request, response) {
+
+	location = JSON.parse(request.query.location)
+
+	RoleModel.find({ $and: [
+		{ "location.lat": { $lt: location.lat + latitudeThreshold*10 } },
+		{ "location.lat": { $gt: location.lat - latitudeThreshold*10 } },
+		{ "location.lng": { $lt: location.lng + longitudeThreshold*10 } },
+		{ "location.lng": { $gt: location.lng - longitudeThreshold*10 } }
+	]}, function(err, res) { 
+
 		if (res) {
 			response.send(res)
 		}
 		else if (err)
 			console.log('res: ' + err)
+	})
+})
+
+app.post('/experience', (req, res) => { 
+
+	req.body.pic.data = imageDataURI.decode('data:'+req.body.pic.contentType+';base64,'+req.body.pic.data).dataBuffer
+
+	let newExperience = new ExperienceModel({
+		user: req.body.user,
+		name: req.body.name,
+		ratting: req.body.ratting,
+		location: req.body.location,
+		date: req.body.date,
+		pic: req.body.pic,
+		comment: req.body.comment,
+		tag: req.body.tag
+	})
+	newExperience.save(function(err) { if (err) throw err })
+
+	RoleModel.find({ name: req.body.name }, function(err, roles) { 
+		if (roles.length == 0) {
+			let newRole = new RoleModel({
+				name: req.body.name,
+				ratting: req.body.ratting,
+				location: req.body.location,
+				address: '',
+				pic: req.body.pic,
+				pics: [],
+				comments: [ req.body.comment ],
+				tags: [ req.body.tag ]
+			})
+			newRole.save(function(err) { if (err) throw err })
+		}
+		else if (roles.length == 1) {
+			RoleModel.update({ name: roles[0].name }, { $addToSet: { pics: req.body.pic, tags: req.body.tag, comments: req.body.comment } }, function(err) { if (err) throw err })
+		}
+		else if (err) {
+			console.log('res: ' + err)
+		}
+		res.send({ message: "Éh uz Guri"})
 	});
 })
 
@@ -183,11 +194,7 @@ app.get('/experiences', function(request, response) {
 // http server operactions
 //////////////////////////////////////////////////////////
 
-process.argv.forEach((val, index, array) => {
-    if (val === 'local') {
-        envMode = env.Local
-    }
-})
+process.argv.forEach((val, index, array) => { if (val === 'local') { envMode = env.Local } })
   
 if (envMode === env.Local)
     port = 1000
@@ -206,20 +213,16 @@ app.listen(port, function (error) {
 //////////////////////////////////////////////////////////
 
 var mongoose = require('mongoose')
-
-mongoose.connect('mongodb://injoyserver:Yjjbr7SeP03oIKbHgvRAvO8lzEB4U2NNlPGx9IDIiqt3dnq5QQ32SjRVvQY3GFjhYOQf0gpCR393jiqrjnAawQ%3D%3D@injoyserver.documents.azure.com:10255/injoy?ssl=true', function(err, res) {
-  if ( err )
-    console.log('error: '+err);
-  else
-    console.log('Mongoose is connected to MongoDb on 27017');
-});
+mongoose.connect('mongodb://injoyserverdb.documents.azure.com:10255/injoy?ssl=true', { auth: { user: 'injoyserverdb', password: 'eiHlZ9VM4595rukD7x58HrW0rHTLZZRElLwFadq4qj70HRXfzP4N9RKeOVq7acyHrMYoMt3iqeeSbudYF4sJhA==' }})
+  .then(() => { console.log('Mongoose is connected to MongoDb on 27017') })
+  .catch(err => { console.log('error: '+err) })
 
 var db = mongoose.connection;
 db.on('error', console.error.bind(console, 'connection error:'));
 db.once('open', function() { console.log('connected to mongo') });
 
 var imgSchema = mongoose.Schema({ data: Buffer, contentType: String })
-var locationSchema = mongoose.Schema({ lat: String, lng: String })
+var locationSchema = mongoose.Schema({ lat: Number, lng: Number })
 
 var roleSchema = mongoose.Schema({
 	name: String,
@@ -232,7 +235,7 @@ var roleSchema = mongoose.Schema({
 	tags: [ String ]
 });
 
-var RoleModel = mongoose.model('role', roleSchema);
+var RoleModel = mongoose.model('roles', roleSchema);
 
 var experienceSchema = mongoose.Schema({
 	user: String,
@@ -245,7 +248,7 @@ var experienceSchema = mongoose.Schema({
 	tag: String
 });
 
-var ExperienceModel = mongoose.model('experience', experienceSchema);
+var ExperienceModel = mongoose.model('experiences', experienceSchema);
 
 // var ap11Model = new RoleModel({
 // 	name: 'Ap11',
@@ -260,7 +263,7 @@ var ExperienceModel = mongoose.model('experience', experienceSchema);
 // var redDoor = new RoleModel({
 //     name: 'Red Door',
 //     ratting: 4,
-//     location: { latitude: -30.041674, longitude: -51.221539 },
+//     location: { lat: -30.041674, lng: -51.221539 },
 //     address: 'R. José do Patrocínio, 797 - Cidade Baixa, Porto Alegre - RS',
 // 	pics: [],
 // 	pic: { data: file.readFileSync("./images/bars/redDoor.jpg"), contentType: 'image/jpg' },
@@ -270,7 +273,7 @@ var ExperienceModel = mongoose.model('experience', experienceSchema);
 // var voidModel = new RoleModel({
 //     name: 'Void',
 //     ratting: 3,
-//     location: { latitude: -30.024672, longitude: -51.203145 },
+//     location: { lat: -30.024672, lng: -51.203145 },
 // 	address: 'R. Luciana de Abreu, 364 - Moinhos de Vento, Porto Alegre - RS',
 // 	pics: [],
 //     pic: { data: file.readFileSync("./images/bars/void.jpg"), contentType: 'image/jpg' },
