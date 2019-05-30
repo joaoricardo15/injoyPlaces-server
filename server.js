@@ -145,10 +145,10 @@ process.argv.forEach((val, index, array) => {
     }
 })
   
-//if (envMode === env.Local)
+if (envMode === env.Local)
     port = 1000
-//else
-    //port = process.env.PORT
+else
+    port = process.env.PORT
 
 app.listen(port, function (error) {
     if(!error)
