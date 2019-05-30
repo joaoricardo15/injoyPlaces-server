@@ -129,6 +129,36 @@ app.post('/role', (req, res) => {
 	});
 })
 
+app.post('/experience', (req, res) => { 
+
+	req.body.pic.data = imageDataURI.decode('data:'+req.body.pic.contentType+';base64,'+req.body.pic.data).dataBuffer
+
+	req.body['user'] = 'dao'
+
+	let newExperience = new ExperienceModel(req.body)
+	newExperience.save(function(err) { if (err) throw err })
+
+	RoleModel.find({ name: req.body.name }, function(err, roles) { 
+		if (roles.length == 0) {
+			let newRole = new RoleModel({
+				name: req.body.name,
+				ratting: req.body.ratting,
+				location: req.body.location,
+				address: req.body.location,
+				pic: req.body.pic,
+				pics: [],
+				comments: [ req.body.comment ],
+				tags: [ req.body.tag ]
+			})
+			newRole.save(function(err) { if (err) throw err })
+		}
+		else if (err) {
+			console.log('res: ' + err)
+		}
+		res.send({ message: "Éh uz Guri"})
+	});
+})
+
 app.get('/roles', function(request, response) {
 	RoleModel.find({}, function(err, res) { 
 		if (res) {
@@ -138,6 +168,20 @@ app.get('/roles', function(request, response) {
 			console.log('res: ' + err)
 	});
 })
+
+app.get('/experiences', function(request, response) {
+	ExperienceModel.find({}, function(err, res) { 
+		if (res) {
+			response.send(res)
+		}
+		else if (err)
+			console.log('res: ' + err)
+	});
+})
+
+//////////////////////////////////////////////////////////
+// http server operactions
+//////////////////////////////////////////////////////////
 
 process.argv.forEach((val, index, array) => {
     if (val === 'local') {
@@ -174,8 +218,6 @@ var db = mongoose.connection;
 db.on('error', console.error.bind(console, 'connection error:'));
 db.once('open', function() { console.log('connected to mongo') });
 
-
-
 var imgSchema = mongoose.Schema({ data: Buffer, contentType: String })
 var locationSchema = mongoose.Schema({ lat: String, lng: String })
 
@@ -186,11 +228,24 @@ var roleSchema = mongoose.Schema({
 	address: String,
 	pic: imgSchema,
 	pics: [ imgSchema ],
-	coments: [ String ],
+	comments: [ String ],
 	tags: [ String ]
 });
 
 var RoleModel = mongoose.model('role', roleSchema);
+
+var experienceSchema = mongoose.Schema({
+	user: String,
+	name: String,
+	ratting: Number,
+	location: locationSchema,
+	date: Date,
+	pic: imgSchema,
+	comment: String,
+	tag: String
+});
+
+var ExperienceModel = mongoose.model('experience', experienceSchema);
 
 // var ap11Model = new RoleModel({
 // 	name: 'Ap11',
@@ -199,7 +254,7 @@ var RoleModel = mongoose.model('role', roleSchema);
 // 	address: 'R. General Lima e Silva, 697 - Cidade Baixa, Porto Alegre - RS',
 // 	pics: [],
 // 	pic: { data: file.readFileSync("./images/bars/ap11.jpg"), contentType: 'image/jpg' },
-// 	coments: [],
+// 	comments: [],
 // 	tags: []
 // })
 // var redDoor = new RoleModel({
@@ -209,7 +264,7 @@ var RoleModel = mongoose.model('role', roleSchema);
 //     address: 'R. José do Patrocínio, 797 - Cidade Baixa, Porto Alegre - RS',
 // 	pics: [],
 // 	pic: { data: file.readFileSync("./images/bars/redDoor.jpg"), contentType: 'image/jpg' },
-//     coments: [],
+//     comments: [],
 //     tags: []
 // })
 // var voidModel = new RoleModel({
@@ -219,7 +274,7 @@ var RoleModel = mongoose.model('role', roleSchema);
 // 	address: 'R. Luciana de Abreu, 364 - Moinhos de Vento, Porto Alegre - RS',
 // 	pics: [],
 //     pic: { data: file.readFileSync("./images/bars/void.jpg"), contentType: 'image/jpg' },
-//     coments: [],
+//     comments: [],
 //     tags: []
 // })
 // ap11Model.save(function(err) { if (err) throw err })
