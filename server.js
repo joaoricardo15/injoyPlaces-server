@@ -1,6 +1,7 @@
 var express = require('express')
   , file = require('fs')
   , bodyParser = require('body-parser')
+  , imageDataURI = require('image-data-uri')
   , app = express()
   , env = { Local: 0, Azure: 1 }
   , envMode = env.Azure
@@ -52,8 +53,6 @@ app.delete('/positions', function(req, res) {
 })
 
 
-
-var imageDataURI = require('image-data-uri')
 
 function addLocation(position) {
 
@@ -114,13 +113,12 @@ function addLocation(position) {
 	}
 }
 
-
 app.post('/role', (req, res) => { 
 
 	req.body.pic.data = imageDataURI.decode('data:'+req.body.pic.contentType+';base64,'+req.body.pic.data).dataBuffer
 
-	RoleModel.find({ name: req.body.name }, function(err, res) { 
-		if (res.length == 0) {
+	RoleModel.find({ name: req.body.name }, function(err, roles) { 
+		if (roles.length == 0) {
 			let newRole = new RoleModel(req.body)
 			newRole.save(function(err) { if (err) throw err })
 		}
@@ -141,23 +139,22 @@ app.get('/roles', function(request, response) {
 	});
 })
 
-
 process.argv.forEach((val, index, array) => {
     if (val === 'local') {
         envMode = env.Local
     }
 })
   
-if (envMode === env.Local)
+//if (envMode === env.Local)
     port = 1000
-else
-    port = process.env.PORT
+//else
+    //port = process.env.PORT
 
 app.listen(port, function (error) {
     if(!error)
-        console.log('Find server is listen to port: '+port)
+        console.log('Find server is listen to port: ' + port)
     else
-        console.log('error on find server inicialization: '+error)
+        console.log('error on find server inicialization: ' + error)
 })
 
 //////////////////////////////////////////////////////////
@@ -177,6 +174,8 @@ var db = mongoose.connection;
 db.on('error', console.error.bind(console, 'connection error:'));
 db.once('open', function() { console.log('connected to mongo') });
 
+
+
 var imgSchema = mongoose.Schema({ data: Buffer, contentType: String })
 var locationSchema = mongoose.Schema({ lat: String, lng: String })
 
@@ -193,36 +192,36 @@ var roleSchema = mongoose.Schema({
 
 var RoleModel = mongoose.model('role', roleSchema);
 
-var ap11Model = new RoleModel({
-	name: 'Ap11',
-	ratting: 5,
-	location: { lat: -30.039171, lng: -51.220676 },
-	address: 'R. General Lima e Silva, 697 - Cidade Baixa, Porto Alegre - RS',
-	pics: [],
-	pic: { data: file.readFileSync("./images/bars/ap11.jpg"), contentType: 'image/jpg' },
-	coments: [],
-	tags: []
-})
-var redDoor = new RoleModel({
-    name: 'Red Door',
-    ratting: 4,
-    location: { latitude: -30.041674, longitude: -51.221539 },
-    address: 'R. José do Patrocínio, 797 - Cidade Baixa, Porto Alegre - RS',
-	pics: [],
-	pic: { data: file.readFileSync("./images/bars/redDoor.jpg"), contentType: 'image/jpg' },
-    coments: [],
-    tags: []
-})
-var voidModel = new RoleModel({
-    name: 'Void',
-    ratting: 3,
-    location: { latitude: -30.024672, longitude: -51.203145 },
-	address: 'R. Luciana de Abreu, 364 - Moinhos de Vento, Porto Alegre - RS',
-	pics: [],
-    pic: { data: file.readFileSync("./images/bars/void.jpg"), contentType: 'image/jpg' },
-    coments: [],
-    tags: []
-})
+// var ap11Model = new RoleModel({
+// 	name: 'Ap11',
+// 	ratting: 5,
+// 	location: { lat: -30.039171, lng: -51.220676 },
+// 	address: 'R. General Lima e Silva, 697 - Cidade Baixa, Porto Alegre - RS',
+// 	pics: [],
+// 	pic: { data: file.readFileSync("./images/bars/ap11.jpg"), contentType: 'image/jpg' },
+// 	coments: [],
+// 	tags: []
+// })
+// var redDoor = new RoleModel({
+//     name: 'Red Door',
+//     ratting: 4,
+//     location: { latitude: -30.041674, longitude: -51.221539 },
+//     address: 'R. José do Patrocínio, 797 - Cidade Baixa, Porto Alegre - RS',
+// 	pics: [],
+// 	pic: { data: file.readFileSync("./images/bars/redDoor.jpg"), contentType: 'image/jpg' },
+//     coments: [],
+//     tags: []
+// })
+// var voidModel = new RoleModel({
+//     name: 'Void',
+//     ratting: 3,
+//     location: { latitude: -30.024672, longitude: -51.203145 },
+// 	address: 'R. Luciana de Abreu, 364 - Moinhos de Vento, Porto Alegre - RS',
+// 	pics: [],
+//     pic: { data: file.readFileSync("./images/bars/void.jpg"), contentType: 'image/jpg' },
+//     coments: [],
+//     tags: []
+// })
 // ap11Model.save(function(err) { if (err) throw err })
 // redDoor.save(function(err) { if (err) throw err })
 // voidModel.save(function(err) { if (err) throw err })
