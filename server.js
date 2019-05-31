@@ -111,27 +111,41 @@ function addLocation(position) {
 	}
 }
 
-app.get('/myExperiences', function(request, response) {
-	ExperienceModel.find({ user: request.query.user }, function(err, res) { 
-		if (res) {
-			response.send(res)
+//////////////////////////////////////////////////////////
+// http operations for injoyInterface
+//////////////////////////////////////////////////////////
+
+app.get('/user', (request, response) => {
+
+	UserModel.find({ user: request.query.user }, function(err, users) { 
+		if (err) {
+			response.send({ message: "Não Éh uz Guri: " + err})
+			throw err
 		}
-		else if (err)
-			console.log('res: ' + err)
+
+		response.send(users)
 	});
 })
 
-app.get('/roles', function(request, response) {
-	RoleModel.find({}, function(err, res) { 
-		if (res) {
-			response.send(res)
+app.get('/rolesForMe', (request, response) => {
+
+	let user = request.body.user
+
+	RoleModel.find({}, function(err, roles) { 
+		if (err) {
+			response.send({ message: "Não Éh uz Guri: " + err})
+			throw err
 		}
-		else if (err)
-			console.log('res: ' + err)
+
+		lists = [
+			{ title: 'Todos os rolês', roles: roles },
+			{ title: 'Novidades', roles: roles.slice().reverse() }
+		]
+		response.send(lists)
 	});
 })
 
-app.get('/possibleRoles', function(request, response) {
+app.get('/rolesAround', (request, response) => {
 
 	location = JSON.parse(request.query.location)
 
@@ -139,55 +153,125 @@ app.get('/possibleRoles', function(request, response) {
 		{ "location.lat": { $lt: location.lat + latitudeThreshold*10 } },
 		{ "location.lat": { $gt: location.lat - latitudeThreshold*10 } },
 		{ "location.lng": { $lt: location.lng + longitudeThreshold*10 } },
-		{ "location.lng": { $gt: location.lng - longitudeThreshold*10 } }
-	]}, function(err, res) { 
+		{ "location.lng": { $gt: location.lng - longitudeThreshold*10 } } ]}, (err, roles) => { 
+			
+			if (err) {
+				response.send({ message: "Não Éh uz Guri: " + err})
+				throw err
+			}
 
-		if (res) {
-			response.send(res)
-		}
-		else if (err)
-			console.log('res: ' + err)
+			response.send(roles)
 	})
 })
 
-app.post('/experience', (req, res) => { 
+app.get('/myExperiences', (request, response) => {
+	
+	ExperienceModel.find({ user: request.query.user }, function(err, experiences) { 
+		if (err) {
+			response.send({ message: "Não Éh uz Guri: " + err})
+			throw err
+		}
 
-	req.body.pic.data = imageDataURI.decode('data:'+req.body.pic.contentType+';base64,'+req.body.pic.data).dataBuffer
+		response.send({
+			achievements: [
+				{ title: 'Rolês descobertos por você', value: experiences.length }
+			],
+			experiences: experiences.slice().reverse()
+		})
+	});
+})
+
+app.post('/user', (request, response) => { 
+
+	let newUser = new UserModel(request.body)
+	newUser.save(err => {
+		if (err) {
+			response.send({ message: "Não Éh uz Guri: " + err})
+			throw err
+		}
+
+		response.send({ message: "Éh uz Guri"})
+	})
+})
+
+app.post('/experience', (request, response) => { 
+
+	if (request.body.pic)
+		request.body.pic.data = imageDataURI.decode('data:'+request.body.pic.contentType+';base64,'+request.body.pic.data).dataBuffer
 
 	let newExperience = new ExperienceModel({
-		user: req.body.user,
-		name: req.body.name,
-		ratting: req.body.ratting,
-		location: req.body.location,
-		date: req.body.date,
-		pic: req.body.pic,
-		comment: req.body.comment,
-		tag: req.body.tag
+		user: request.body.user,
+		name: request.body.name,
+		ratting: request.body.ratting,
+		location: request.body.location,
+		date: request.body.date,
+		pic: request.body.pic,
+		comment: request.body.comment,
+		tag: request.body.tag
 	})
-	newExperience.save(function(err) { if (err) throw err })
+	newExperience.save(err => { 
+		if (err) {
+			response.send({ message: "Não Éh uz Guri: " + err})
+			throw err
+		}
 
-	RoleModel.find({ name: req.body.name }, function(err, roles) { 
-		if (roles.length == 0) {
-			let newRole = new RoleModel({
-				name: req.body.name,
-				ratting: req.body.ratting,
-				location: req.body.location,
-				address: '',
-				pic: req.body.pic,
-				pics: [],
-				comments: [ req.body.comment ],
-				tags: [ req.body.tag ]
-			})
-			newRole.save(function(err) { if (err) throw err })
-		}
-		else if (roles.length == 1) {
-			RoleModel.update({ name: roles[0].name }, { $addToSet: { pics: req.body.pic, tags: req.body.tag, comments: req.body.comment } }, function(err) { if (err) throw err })
-		}
-		else if (err) {
-			console.log('res: ' + err)
-		}
-		res.send({ message: "Éh uz Guri"})
-	});
+		RoleModel.find({ name: request.body.name }, (err, roles) => { 
+			if (err) {
+				response.send({ message: "Não Éh uz Guri: " + err})
+				throw err
+			}
+			else if (roles.length == 0) {
+				let newRole = new RoleModel({
+					name: request.body.name,
+					ratting: request.body.ratting,
+					location: request.body.location,
+					address: '',
+					pic: request.body.pic,
+					pics: [],
+					comments: [ request.body.comment ],
+					tags: [ request.body.tag ]
+				})
+				newRole.save(err => { 
+					if (err) {
+						response.send({ message: "Não Éh uz Guri: " + err})
+						throw err
+					}
+
+					response.send({ message: "Éh uz Guri"})
+				})
+			}
+			else {
+				RoleModel.update({ name: roles[0].name }, { $addToSet: { tags: request.body.tag } }, err => {
+					if (err) {
+						response.send({ message: "Não Éh uz Guri: " + err})
+						throw err
+					}
+
+					if (request.body.pic)
+						RoleModel.update({ name: roles[0].name }, { $push: { pics: request.body.pic } }, err => {
+							if (err) {
+								response.send({ message: "Não Éh uz Guri: " + err})
+								throw err
+							}
+
+							if (request.body.pic)
+								RoleModel.update({ name: roles[0].name }, { $push: { comments: request.body.comment } }, err => {
+									if (err) {
+										response.send({ message: "Não Éh uz Guri: " + err})
+										throw err
+									}
+				
+									response.send({ message: "Éh uz Guri"})
+								})
+							else
+								response.send({ message: "Éh uz Guri"})
+						})
+					else
+						response.send({ message: "Éh uz Guri"})
+				})
+			}
+		});
+	})
 })
 
 //////////////////////////////////////////////////////////
@@ -220,6 +304,13 @@ mongoose.connect('mongodb://injoyserverdb.documents.azure.com:10255/injoy?ssl=tr
 var db = mongoose.connection;
 db.on('error', console.error.bind(console, 'connection error:'));
 db.once('open', function() { console.log('connected to mongo') });
+
+var userSchema = mongoose.Schema({
+	user: String,
+	email: String
+});
+
+var UserModel = mongoose.model('users', userSchema);
 
 var imgSchema = mongoose.Schema({ data: Buffer, contentType: String })
 var locationSchema = mongoose.Schema({ lat: Number, lng: Number })
@@ -282,4 +373,4 @@ var ExperienceModel = mongoose.model('experiences', experienceSchema);
 // })
 // ap11Model.save(function(err) { if (err) throw err })
 // redDoor.save(function(err) { if (err) throw err })
-// voidModel.save(function(err) { if (err) throw err })
+//voidModel.save(function(err) { if (err) throw err })
