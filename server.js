@@ -150,10 +150,10 @@ app.get('/rolesAround', (request, response) => {
 	location = JSON.parse(request.query.location)
 
 	RoleModel.find({ $and: [
-		{ "location.lat": { $lt: location.lat + latitudeThreshold*10 } },
-		{ "location.lat": { $gt: location.lat - latitudeThreshold*10 } },
-		{ "location.lng": { $lt: location.lng + longitudeThreshold*10 } },
-		{ "location.lng": { $gt: location.lng - longitudeThreshold*10 } } ]}, (err, roles) => { 
+		{ "location.lat": { $lt: location.lat + latitudeThreshold*50 } },
+		{ "location.lat": { $gt: location.lat - latitudeThreshold*50 } },
+		{ "location.lng": { $lt: location.lng + longitudeThreshold*50 } },
+		{ "location.lng": { $gt: location.lng - longitudeThreshold*50 } } ]}, (err, roles) => { 
 			
 			if (err) {
 				response.send({ message: "Não Éh uz Guri: " + err})
