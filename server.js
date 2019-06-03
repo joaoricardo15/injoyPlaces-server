@@ -215,12 +215,12 @@ app.post('/experience', (request, response) => {
 			throw err
 		}
 
-		RoleModel.find({ name: request.body.name }, (err, roles) => { 
+		RoleModel.findOne({ name: request.body.name }, (err, role) => { 
 			if (err) {
 				response.send({ message: "Não Éh uz Guri: " + err})
 				throw err
 			}
-			else if (roles.length == 0) {
+			else if (!role) {
 				let newRole = new RoleModel({
 					name: request.body.name,
 					ratting: request.body.ratting,
@@ -228,8 +228,8 @@ app.post('/experience', (request, response) => {
 					address: '',
 					pic: request.body.pic,
 					pics: [],
-					comments: [ request.body.comment ],
-					tags: [ request.body.tag ]
+					comments: request.body.comment ? [ request.body.comment ]: [],
+					tags: request.body.tag ? [ request.body.tag ] : []
 				})
 				newRole.save(err => { 
 					if (err) {
@@ -241,34 +241,40 @@ app.post('/experience', (request, response) => {
 				})
 			}
 			else {
-				RoleModel.update({ name: roles[0].name }, { $addToSet: { tags: request.body.tag } }, err => {
-					if (err) {
-						response.send({ message: "Não Éh uz Guri: " + err})
-						throw err
-					}
 
-					if (request.body.pic)
-						RoleModel.update({ name: roles[0].name }, { $push: { pics: request.body.pic } }, err => {
-							if (err) {
-								response.send({ message: "Não Éh uz Guri: " + err})
-								throw err
-							}
 
-							if (request.body.pic)
-								RoleModel.update({ name: roles[0].name }, { $push: { comments: request.body.comment } }, err => {
-									if (err) {
-										response.send({ message: "Não Éh uz Guri: " + err})
-										throw err
-									}
-				
-									response.send({ message: "Éh uz Guri"})
-								})
-							else
-								response.send({ message: "Éh uz Guri"})
-						})
-					else
-						response.send({ message: "Éh uz Guri"})
-				})
+
+				// RoleModel.update({ name: role.name }, { $set: { "ratting.average": (role.ratting.average*role.ratting.average)/request.body.ratting } }, err => {
+				// 	if (err) {
+				// 		response.send({ message: "Não Éh uz Guri: " + err})
+				// 		throw err
+				// 	}
+				// })
+
+				if (request.body.tag) 
+					RoleModel.update({ name: role.name }, { $addToSet: { tags: request.body.tag } }, err => {
+						if (err) {
+							response.send({ message: "Não Éh uz Guri: " + err})
+							throw err
+						}
+					})
+
+				if (request.body.pic)
+					RoleModel.update({ name: role.name }, { $push: { pics: request.body.pic } }, err => {
+						if (err) {
+							response.send({ message: "Não Éh uz Guri: " + err})
+							throw err
+						}
+					})
+
+				if (request.body.comment)
+					RoleModel.update({ name: role.name }, { $push: { comments: request.body.comment } }, err => {
+						if (err) {
+							response.send({ message: "Não Éh uz Guri: " + err})
+							throw err
+						}
+					})
+				response.send({ message: "Éh uz Guri"})		
 			}
 		});
 	})
@@ -314,10 +320,11 @@ var UserModel = mongoose.model('users', userSchema);
 
 var imgSchema = mongoose.Schema({ data: Buffer, contentType: String })
 var locationSchema = mongoose.Schema({ lat: Number, lng: Number })
+var rattingSchema = mongoose.Schema({ rattings: Number, average: Number })
 
 var roleSchema = mongoose.Schema({
 	name: String,
-	ratting: Number,
+	ratting: rattingSchema,
 	location: locationSchema,
 	address: String,
 	pic: imgSchema,
@@ -343,7 +350,7 @@ var ExperienceModel = mongoose.model('experiences', experienceSchema);
 
 // var ap11Model = new RoleModel({
 // 	name: 'Ap11',
-// 	ratting: 5,
+// 	ratting: { rattings: 1, average: 5 },
 // 	location: { lat: -30.039171, lng: -51.220676 },
 // 	address: 'R. General Lima e Silva, 697 - Cidade Baixa, Porto Alegre - RS',
 // 	pics: [],
@@ -353,7 +360,7 @@ var ExperienceModel = mongoose.model('experiences', experienceSchema);
 // })
 // var redDoor = new RoleModel({
 //     name: 'Red Door',
-//     ratting: 4,
+//     ratting: { rattings: 1, average: 4 },
 //     location: { lat: -30.041674, lng: -51.221539 },
 //     address: 'R. José do Patrocínio, 797 - Cidade Baixa, Porto Alegre - RS',
 // 	pics: [],
@@ -363,7 +370,7 @@ var ExperienceModel = mongoose.model('experiences', experienceSchema);
 // })
 // var voidModel = new RoleModel({
 //     name: 'Void',
-//     ratting: 3,
+//     ratting: { rattings: 1, average: 4 },
 //     location: { lat: -30.024672, lng: -51.203145 },
 // 	address: 'R. Luciana de Abreu, 364 - Moinhos de Vento, Porto Alegre - RS',
 // 	pics: [],
@@ -373,4 +380,4 @@ var ExperienceModel = mongoose.model('experiences', experienceSchema);
 // })
 // ap11Model.save(function(err) { if (err) throw err })
 // redDoor.save(function(err) { if (err) throw err })
-//voidModel.save(function(err) { if (err) throw err })
+// voidModel.save(function(err) { if (err) throw err })
