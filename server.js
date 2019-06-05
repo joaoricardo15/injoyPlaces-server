@@ -137,11 +137,20 @@ app.get('/rolesForMe', (request, response) => {
 			throw err
 		}
 
-		lists = [
-			{ title: 'Todos os rolês', roles: roles },
-			{ title: 'Novidades', roles: roles.slice().reverse() }
-		]
-		response.send(lists)
+		rolesIndexes = []
+
+		for (let i = 0; i < roles.length; i++) {
+			rolesIndexes.push(i)
+		}
+
+		rolesForYou = {
+			roles: roles,
+			myLists: [
+				{ title: 'Todos os rolês', roles: rolesIndexes },
+				{ title: 'Novidades', roles: rolesIndexes.slice().reverse() }
+			]
+		}
+		response.send(rolesForYou)
 	});
 })
 
