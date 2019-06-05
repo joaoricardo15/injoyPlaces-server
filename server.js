@@ -223,7 +223,7 @@ app.post('/experience', (request, response) => {
 			else if (!role) {
 				let newRole = new RoleModel({
 					name: request.body.name,
-					ratting: request.body.ratting,
+					ratting: { rattings: 1, average: request.body.ratting },
 					location: request.body.location,
 					address: '',
 					pic: request.body.pic,
@@ -242,14 +242,12 @@ app.post('/experience', (request, response) => {
 			}
 			else {
 
-
-
-				// RoleModel.update({ name: role.name }, { $set: { "ratting.average": (role.ratting.average*role.ratting.average)/request.body.ratting } }, err => {
-				// 	if (err) {
-				// 		response.send({ message: "Não Éh uz Guri: " + err})
-				// 		throw err
-				// 	}
-				// })
+				RoleModel.update({ name: role.name }, { $set: { "ratting.average": (role.ratting.average*role.ratting.rattings + request.body.ratting)/(role.ratting.rattings + 1), "ratting.rattings": role.ratting.rattings + 1, } }, err => {
+					if (err) {
+						response.send({ message: "Não Éh uz Guri: " + err})
+						throw err
+					}
+				})
 
 				if (request.body.tag) 
 					RoleModel.update({ name: role.name }, { $addToSet: { tags: request.body.tag } }, err => {
