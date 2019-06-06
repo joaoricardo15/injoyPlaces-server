@@ -160,10 +160,10 @@ app.get('/rolesAround', (request, response) => {
 	var longitudeThreshold = squaredArea/(geoLocationConstant*Math.cos(location.lng))
 
 	RoleModel.find({ $and: [
-		{ "location.lat": { $lt: location.lat + latitudeThreshold*10 } },
-		{ "location.lat": { $gt: location.lat - latitudeThreshold*10 } },
-		{ "location.lng": { $lt: location.lng + longitudeThreshold*10 } },
-		{ "location.lng": { $gt: location.lng - longitudeThreshold*10 } } ]}, (err, roles) => { 
+		{ "location.lat": { $lt: location.lat + latitudeThreshold } },
+		{ "location.lat": { $gt: location.lat - latitudeThreshold } },
+		{ "location.lng": { $lt: location.lng + longitudeThreshold } },
+		{ "location.lng": { $gt: location.lng - longitudeThreshold } } ]}, (err, roles) => { 
 			
 			if (err) {
 				response.send({ message: "Não Éh uz Guri: " + err})
