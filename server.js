@@ -20,23 +20,18 @@ app.use(function(req, res, next) {
     1grau latitude = 111.12Km
     
     1grau longitude = 111.12km * cos(latitude) 
-    
-    nossa latitude = +- -30grau -> cos(-30) = +- 0.87
 
-    -> para uma area quadrada de 20m:
+    -> para uma area quadrada de lado igual à 50m:
     
-    40m correspondem a +- 0.00036 graus de latitude
-    
-    40m correspondem a +- 0.00042 graus de longitude
+		50m correspondem a +- 0.00045 graus de latitude
+		
+		50m correspondem a +- 50/(111120.cos(lng))  graus de latitude
 
 /////////////////////////////////////////////////////////////////////////////////////////*/
 
 var userPositions = []
-
-var maxPositionsPerUser = 1000
-var latitudeThreshold = 0.00036
-var longitudeThreshold = 0.00042
-var localMinimunInterval = 600
+const maxPositionsPerUser = 1000
+const localMinimunInterval = 600
 
 app.post('/positions', function(req, res) {
 	for (let i = 0; i < req.body.length; i++) { addLocation(req.body[i]) }
@@ -115,6 +110,10 @@ function addLocation(position) {
 // http operations for injoyInterface
 //////////////////////////////////////////////////////////
 
+const squaredArea = 50
+const geoLocationConstant = 111120
+const latitudeThreshold = squaredArea/geoLocationConstant
+
 app.get('/user', (request, response) => {
 
 	UserModel.find({ user: request.query.user }, function(err, users) { 
@@ -158,11 +157,13 @@ app.get('/rolesAround', (request, response) => {
 
 	location = JSON.parse(request.query.location)
 
+	var longitudeThreshold = squaredArea/(geoLocationConstant*Math.cos(location.lng))
+
 	RoleModel.find({ $and: [
-		{ "location.lat": { $lt: location.lat + latitudeThreshold*50 } },
-		{ "location.lat": { $gt: location.lat - latitudeThreshold*50 } },
-		{ "location.lng": { $lt: location.lng + longitudeThreshold*50 } },
-		{ "location.lng": { $gt: location.lng - longitudeThreshold*50 } } ]}, (err, roles) => { 
+		{ "location.lat": { $lt: location.lat + latitudeThreshold } },
+		{ "location.lat": { $gt: location.lat - latitudeThreshold } },
+		{ "location.lng": { $lt: location.lng + longitudeThreshold } },
+		{ "location.lng": { $gt: location.lng - longitudeThreshold } } ]}, (err, roles) => { 
 			
 			if (err) {
 				response.send({ message: "Não Éh uz Guri: " + err})
