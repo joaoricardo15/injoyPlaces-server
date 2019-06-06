@@ -160,15 +160,17 @@ app.get('/rolesAround', (request, response) => {
 	var longitudeThreshold = squaredArea/(geoLocationConstant*Math.cos(location.lng))
 
 	RoleModel.find({ $and: [
-		{ "location.lat": { $lt: location.lat + latitudeThreshold } },
-		{ "location.lat": { $gt: location.lat - latitudeThreshold } },
-		{ "location.lng": { $lt: location.lng + longitudeThreshold } },
-		{ "location.lng": { $gt: location.lng - longitudeThreshold } } ]}, (err, roles) => { 
+		{ "location.lat": { $lt: location.lat + latitudeThreshold*10 } },
+		{ "location.lat": { $gt: location.lat - latitudeThreshold*10 } },
+		{ "location.lng": { $lt: location.lng + longitudeThreshold*10 } },
+		{ "location.lng": { $gt: location.lng - longitudeThreshold*10 } } ]}, (err, roles) => { 
 			
 			if (err) {
 				response.send({ message: "Não Éh uz Guri: " + err})
 				throw err
 			}
+
+
 
 			response.send(roles)
 	})
@@ -258,6 +260,16 @@ app.post('/experience', (request, response) => {
 						throw err
 					}
 				})
+
+				RoleModel.update({ name: role.name }, { $set: {
+							"location.lat": (role.location.lat*role.ratting.rattings + request.body.location.lat)/(role.ratting.rattings + 1), 
+							"location.lng": (role.location.lng*role.ratting.rattings + request.body.location.lng)/(role.ratting.rattings + 1)
+					} }, err => {
+						if (err) {
+							response.send({ message: "Não Éh uz Guri: " + err})
+							throw err
+						}
+					})
 
 				if (request.body.tag) 
 					RoleModel.update({ name: role.name }, { $addToSet: { tags: request.body.tag } }, err => {
