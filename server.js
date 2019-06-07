@@ -1,4 +1,5 @@
 var express = require('express')
+	, httpRequest = require("request")
   , imageDataURI = require('image-data-uri')
   , bodyParser = require('body-parser')
   , file = require('fs')
@@ -159,21 +160,23 @@ app.get('/rolesAround', (request, response) => {
 
 	var longitudeThreshold = squaredArea/(geoLocationConstant*Math.cos(location.lng))
 
-	RoleModel.find({ $and: [
-		{ "location.lat": { $lt: location.lat + latitudeThreshold } },
-		{ "location.lat": { $gt: location.lat - latitudeThreshold } },
-		{ "location.lng": { $lt: location.lng + longitudeThreshold } },
-		{ "location.lng": { $gt: location.lng - longitudeThreshold } } ]}, (err, roles) => { 
-			
+	RoleModel
+		.find({ $and: [
+			{ "location.lat": { $lt: location.lat + latitudeThreshold*50 } },
+			{ "location.lat": { $gt: location.lat - latitudeThreshold*50 } },
+			{ "location.lng": { $lt: location.lng + longitudeThreshold*50 } },
+			{ "location.lng": { $gt: location.lng - longitudeThreshold*50 } } ] } ) //, (err, roles) => { 
+		.sort({ "ratting.rattings": -1})
+		.limit(10)
+		.then(roles => { 
+			response.send(roles)
+		})
+		.catch(err => {
 			if (err) {
 				response.send({ message: "Não Éh uz Guri: " + err})
 				throw err
 			}
-
-
-
-			response.send(roles)
-	})
+		})
 })
 
 app.get('/myExperiences', (request, response) => {
@@ -195,8 +198,8 @@ app.get('/myExperiences', (request, response) => {
 
 app.post('/user', (request, response) => { 
 
-	let newUser = new UserModel(request.body)
-	newUser.save(err => {
+	let newUserModel = new UserModel(request.body)
+	newUserModel.save(err => {
 		if (err) {
 			response.send({ message: "Não Éh uz Guri: " + err})
 			throw err
@@ -206,65 +209,74 @@ app.post('/user', (request, response) => {
 	})
 })
 
-app.post('/experience', (request, response) => { 
+app.post('/experience', async (request, response) => { 
 
-	if (request.body.pic)
-		request.body.pic.data = imageDataURI.decode('data:'+request.body.pic.contentType+';base64,'+request.body.pic.data).dataBuffer
-
-	let newExperience = new ExperienceModel({
+	let newExperience = {
 		user: request.body.user,
 		name: request.body.name,
 		ratting: request.body.ratting,
 		location: request.body.location,
+		address: null,
 		date: request.body.date,
-		pic: request.body.pic,
+		pic: request.body.pic ? imageDataURI.decode('data:'+request.body.pic.contentType+';base64,'+request.body.pic.data).dataBuffer : request.body.pic,
 		comment: request.body.comment,
 		tag: request.body.tag
-	})
-	newExperience.save(err => { 
-		if (err) {
-			response.send({ message: "Não Éh uz Guri: " + err})
-			throw err
-		}
+	}
 
-		RoleModel.findOne({ name: request.body.name }, (err, role) => { 
+	RoleModel.findOne({ name: newExperience.name }, (err, role) => { 		
 			if (err) {
 				response.send({ message: "Não Éh uz Guri: " + err})
 				throw err
 			}
 			else if (!role) {
-				let newRole = new RoleModel({
-					name: request.body.name,
-					ratting: { rattings: 1, average: request.body.ratting },
-					location: request.body.location,
-					address: '',
-					pic: request.body.pic,
-					pics: [],
-					comments: request.body.comment ? [ request.body.comment ]: [],
-					tags: request.body.tag ? [ request.body.tag ] : []
-				})
-				newRole.save(err => { 
-					if (err) {
-						response.send({ message: "Não Éh uz Guri: " + err})
-						throw err
-					}
 
-					response.send({ message: "Éh uz Guri"})
+				let url = 'http://nominatim.openstreetmap.org/reverse?lat='+newExperience.location.lat+'&lon='+newExperience.location.lng+'&format=json'
+
+				httpRequest(url, (error, response, body) => {
+				
+					body = JSON.parse(body)
+
+					newExperience.address = body.address.road + 
+					  ', ' + body.address.house_number + 	
+  					' - ' + body.address.suburb  + 
+						', ' + body.address.city + 
+						'/' + body.address.state + 
+						' - ' + body.address.country
+
+					let newRoleModel = new RoleModel({
+						name: newExperience.name,
+						ratting: { average: newExperience.ratting, rattings: 1 },
+						location: newExperience.location,
+						address: newExperience.address,
+						pic: newExperience.pic,
+						pics: newExperience.pic ? [ newExperience.pic ] : [],
+						comments: newExperience.comment ? [ newExperience.comment ]: [],
+						tags: newExperience.tag ? [ newExperience.tag ] : []
+					})
+
+					newRoleModel.save(err => { 
+						if (err) {
+							response.send({ message: "Não Éh uz Guri: " + err})
+							throw err
+						}
+					})
 				})
 			}
 			else {
+				newExperience.address = role.address
 
-				RoleModel.update({ name: role.name }, { $set: { "ratting.average": (role.ratting.average*role.ratting.rattings + request.body.ratting)/(role.ratting.rattings + 1), "ratting.rattings": role.ratting.rattings + 1, } }, err => {
+				RoleModel.update({ name: role.name }, { $set: { "ratting.average": (role.ratting.average*role.ratting.rattings + newExperience.ratting.average)/(role.ratting.rattings + 1), "ratting.rattings": role.ratting.rattings + 1, } }, err => {
 					if (err) {
 						response.send({ message: "Não Éh uz Guri: " + err})
 						throw err
 					}
 				})
 
-				RoleModel.update({ name: role.name }, { $set: {
-							"location.lat": (role.location.lat*role.ratting.rattings + request.body.location.lat)/(role.ratting.rattings + 1), 
-							"location.lng": (role.location.lng*role.ratting.rattings + request.body.location.lng)/(role.ratting.rattings + 1)
-					} }, err => {
+				RoleModel.update({ name: role.name }, { 
+					$set: {
+							"location.lat": (role.location.lat*role.ratting.rattings + newExperience.location.lat)/(role.ratting.rattings + 1), 
+							"location.lng": (role.location.lng*role.ratting.rattings + newExperience.location.lng)/(role.ratting.rattings + 1) } 
+					}, err => {
 						if (err) {
 							response.send({ message: "Não Éh uz Guri: " + err})
 							throw err
@@ -272,7 +284,7 @@ app.post('/experience', (request, response) => {
 					})
 
 				if (request.body.tag) 
-					RoleModel.update({ name: role.name }, { $addToSet: { tags: request.body.tag } }, err => {
+					RoleModel.update({ name: role.name }, { $addToSet: { tags: newExperience.tag } }, err => {
 						if (err) {
 							response.send({ message: "Não Éh uz Guri: " + err})
 							throw err
@@ -280,7 +292,7 @@ app.post('/experience', (request, response) => {
 					})
 
 				if (request.body.pic)
-					RoleModel.update({ name: role.name }, { $push: { pics: request.body.pic } }, err => {
+					RoleModel.update({ name: role.name }, { $push: { pics: newExperience.pic } }, err => {
 						if (err) {
 							response.send({ message: "Não Éh uz Guri: " + err})
 							throw err
@@ -288,15 +300,22 @@ app.post('/experience', (request, response) => {
 					})
 
 				if (request.body.comment)
-					RoleModel.update({ name: role.name }, { $push: { comments: request.body.comment } }, err => {
+					RoleModel.update({ name: role.name }, { $push: { comments: newExperience.comment } }, err => {
 						if (err) {
 							response.send({ message: "Não Éh uz Guri: " + err})
 							throw err
 						}
 					})
-				response.send({ message: "Éh uz Guri"})		
 			}
-		});
+
+			let newExperienceModel = new ExperienceModel(newExperience)
+			newExperienceModel.save(err => { 
+				if (err) {
+					response.send({ message: "Não Éh uz Guri: " + err})
+					throw err
+				}
+				response.send({ message: "Éh uz Guri"})
+			})
 	})
 })
 
@@ -351,7 +370,7 @@ var roleSchema = mongoose.Schema({
 	pics: [ imgSchema ],
 	comments: [ String ],
 	tags: [ String ]
-});
+})
 
 var RoleModel = mongoose.model('roles', roleSchema);
 
@@ -360,11 +379,12 @@ var experienceSchema = mongoose.Schema({
 	name: String,
 	ratting: Number,
 	location: locationSchema,
+	address: String,
 	date: Date,
 	pic: imgSchema,
 	comment: String,
 	tag: String
-});
+})
 
 var ExperienceModel = mongoose.model('experiences', experienceSchema);
 
