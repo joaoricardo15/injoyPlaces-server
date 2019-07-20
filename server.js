@@ -265,7 +265,7 @@ app.post('/experience', async (request, response) => {
 			else {
 				newExperience.address = role.address
 
-				RoleModel.update({ name: role.name }, { $set: { "ratting.average": (role.ratting.average*role.ratting.rattings + newExperience.ratting.average)/(role.ratting.rattings + 1), "ratting.rattings": role.ratting.rattings + 1, } }, err => {
+				RoleModel.update({ name: role.name }, { $set: { "ratting.average": (role.ratting.average*role.ratting.rattings + newExperience.ratting)/(role.ratting.rattings + 1), "ratting.rattings": role.ratting.rattings + 1, } }, err => {
 					if (err) {
 						response.send({ message: "Não Éh uz Guri: " + err})
 						throw err
