@@ -150,10 +150,10 @@ app.get('/rolesForMe', (request, response) => {
 				{ title: 'Bares', icon: 'beer', roles: rolesIndexes },
 				{ title: 'Restaurantes', icon: 'restaurant', roles: rolesIndexes },
 				{ title: 'Próximos', icon: 'pin', roles: rolesIndexes.slice().reverse() },
-				{ title: 'Bem avaliados', icon: 'ribbon', roles: rolesIndexes },
-				{ title: 'Mais comentados', icon: 'megaphone', roles: rolesIndexes },
-				{ title: 'Novidades', icon: 'compass', roles: rolesIndexes.slice().reverse() },
-				{ title: 'Todos os rolês', icon: 'globe', roles: rolesIndexes }
+				// { title: 'Bem avaliados', icon: 'ribbon', roles: rolesIndexes },
+				// { title: 'Mais comentados', icon: 'megaphone', roles: rolesIndexes },
+				// { title: 'Novidades', icon: 'compass', roles: rolesIndexes.slice().reverse() },
+				// { title: 'Todos os rolês', icon: 'globe', roles: rolesIndexes }
 			]
 		}
 		response.send(rolesForYou)
