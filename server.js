@@ -218,7 +218,7 @@ app.post('/experience', async (request, response) => {
 		location: request.body.location,
 		address: null,
 		date: request.body.date,
-		pic: request.body.pic ? imageDataURI.decode('data:'+request.body.pic.contentType+';base64,'+request.body.pic.data).dataBuffer : request.body.pic,
+		pic: request.body.pic ? { data: imageDataURI.decode('data:'+request.body.pic.contentType+';base64,'+request.body.pic.data).dataBuffer, Buffer, contentType: request.body.pic.contentType } : request.body.pic,
 		comment: request.body.comment,
 		tag: request.body.tag
 	}
