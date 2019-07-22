@@ -147,7 +147,7 @@ app.get('/rolesForMe', (request, response) => {
 			roles: roles,
 			myLists: [
 				{ title: 'Para você', icon: 'flame', roles: rolesIndexes },
-				{ title: 'Bares', icon: 'beer', roles: rolesIndexes },
+				{ title: 'Bares', icon: 'beer', roles: rolesIndexes.slice().reverse() },
 				{ title: 'Restaurantes', icon: 'restaurant', roles: rolesIndexes },
 				{ title: 'Próximos', icon: 'pin', roles: rolesIndexes.slice().reverse() },
 				// { title: 'Bem avaliados', icon: 'ribbon', roles: rolesIndexes },
