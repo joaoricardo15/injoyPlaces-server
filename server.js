@@ -142,18 +142,14 @@ app.get('/rolesForMe', (request, response) => {
 		for (let i = 0; i < roles.length; i++) {
 			rolesIndexes.push(i)
 		}
-
+		
 		rolesForYou = {
 			roles: roles,
 			myLists: [
 				{ title: 'Para você', icon: 'flame', roles: rolesIndexes },
 				{ title: 'Bares', icon: 'beer', roles: rolesIndexes.slice().reverse() },
 				{ title: 'Restaurantes', icon: 'restaurant', roles: rolesIndexes },
-				{ title: 'Próximos', icon: 'pin', roles: rolesIndexes.slice().reverse() },
-				// { title: 'Bem avaliados', icon: 'ribbon', roles: rolesIndexes },
-				// { title: 'Mais comentados', icon: 'megaphone', roles: rolesIndexes },
-				// { title: 'Novidades', icon: 'compass', roles: rolesIndexes.slice().reverse() },
-				// { title: 'Todos os rolês', icon: 'globe', roles: rolesIndexes }
+				{ title: 'Próximos', icon: 'pin', roles: rolesIndexes.slice().reverse() }
 			]
 		}
 		response.send(rolesForYou)
@@ -168,10 +164,10 @@ app.get('/rolesAround', (request, response) => {
 
 	RoleModel
 		.find({ $and: [
-			{ "location.lat": { $lt: location.lat + latitudeThreshold*50 } },
-			{ "location.lat": { $gt: location.lat - latitudeThreshold*50 } },
-			{ "location.lng": { $lt: location.lng + longitudeThreshold*50 } },
-			{ "location.lng": { $gt: location.lng - longitudeThreshold*50 } } ] } ) //, (err, roles) => { 
+			{ "location.lat": { $lt: location.lat + latitudeThreshold } },
+			{ "location.lat": { $gt: location.lat - latitudeThreshold } },
+			{ "location.lng": { $lt: location.lng + longitudeThreshold } },
+			{ "location.lng": { $gt: location.lng - longitudeThreshold } } ] } ) //, (err, roles) => { 
 		.sort({ "ratting.rattings": -1})
 		.limit(10)
 		.then(roles => { 
