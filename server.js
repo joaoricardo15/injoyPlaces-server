@@ -191,7 +191,9 @@ app.get('/myExperiences', (request, response) => {
 
 		response.send({
 			achievements: [
-				{ title: 'Rolês descobertos por você', value: experiences.length }
+				{ title: 'Descobertas', icon: 'trophy', value: experiences.length },
+				{ title: 'Bares', icon: 'beer', value: experiences.length },
+				{ title: 'Restaurantes', icon: 'restaurant', value: experiences.length }
 			],
 			experiences: experiences.slice().reverse()
 		})
