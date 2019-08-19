@@ -191,6 +191,8 @@ app.get('/myExperiences', (request, response) => {
 
 		response.send({
 			achievements: [
+				{ title: 'Rolezeiro', message: '3 rolês essa semana, e contando...', img: experiences.length > 0 ? experiences[0].pic : null },
+				{ title: 'Gourmet', message: 'mais 10 restaurantes conceituados na cidade', img: experiences.length > 0 ? experiences[0].pic : null },
 				{ title: 'Experiências', icon: 'pin', value: experiences.length },
 				{ title: 'Descobertas', icon: 'trophy', value: experiences.length },
 				{ title: 'Bares', icon: 'beer', value: experiences.length },
