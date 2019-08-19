@@ -191,6 +191,7 @@ app.get('/myExperiences', (request, response) => {
 
 		response.send({
 			achievements: [
+				{ title: 'Experiências', icon: 'pin', value: experiences.length },
 				{ title: 'Descobertas', icon: 'trophy', value: experiences.length },
 				{ title: 'Bares', icon: 'beer', value: experiences.length },
 				{ title: 'Restaurantes', icon: 'restaurant', value: experiences.length }
