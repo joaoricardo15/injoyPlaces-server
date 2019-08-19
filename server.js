@@ -198,6 +198,22 @@ app.get('/myExperiences', (request, response) => {
 				{ title: 'Bares', icon: 'beer', value: experiences.length },
 				{ title: 'Restaurantes', icon: 'restaurant', value: experiences.length }
 			],
+			hints: [
+				{
+					name: 'ir ao bar com os guris',
+					date: new Date(),
+					location: 'boteco da república',
+					pic: { data: file.readFileSync("./images/bars/ap11.jpg"), contentType: 'image/jpg' },
+					comment: 'partiu doideraaaa!'
+				},
+				{
+					name: 'estudar',
+					date: new Date(),
+					location: 'meu quarto',
+					pic: { data: file.readFileSync("./images/bart-icon.png"), contentType: 'image/png' },
+					comment: 'partiu estudos!'
+				}
+			],
 			experiences: experiences.slice().reverse()
 		})
 	});
@@ -357,16 +373,16 @@ var db = mongoose.connection;
 db.on('error', console.error.bind(console, 'connection error:'));
 db.once('open', function() { console.log('connected to mongo') });
 
+var imgSchema = mongoose.Schema({ data: Buffer, contentType: String })
+var locationSchema = mongoose.Schema({ lat: Number, lng: Number })
+var rattingSchema = mongoose.Schema({ rattings: Number, average: Number })
+
 var userSchema = mongoose.Schema({
 	user: String,
 	email: String
 });
 
 var UserModel = mongoose.model('users', userSchema);
-
-var imgSchema = mongoose.Schema({ data: Buffer, contentType: String })
-var locationSchema = mongoose.Schema({ lat: Number, lng: Number })
-var rattingSchema = mongoose.Schema({ rattings: Number, average: Number })
 
 var roleSchema = mongoose.Schema({
 	name: String,
