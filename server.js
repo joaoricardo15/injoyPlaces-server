@@ -191,12 +191,12 @@ app.get('/myExperiences', (request, response) => {
 
 		response.send({
 			achievements: [
-				{ title: 'Rolezeiro', message: '3 rolês essa semana, e contando...', img: { data: file.readFileSync("./images/bars/ap11.jpg"), contentType: 'image/jpg' } },
+				{ title: 'Rolezeiro', message: '3 rolês essa semana, e contando...' },
 				{ title: 'Gourmet', message: 'mais 10 restaurantes conceituados na cidade', img: { data: file.readFileSync("./images/bart-icon.png"), contentType: 'image/png' } },
 				{ title: 'Experiências', icon: 'pin', value: experiences.length },
 				{ title: 'Descobertas', icon: 'trophy', value: experiences.length },
 				{ title: 'Bares', icon: 'beer', value: experiences.length },
-				{ title: 'Restaurantes', icon: 'restaurant', value: experiences.length }
+				{ title: 'Restaurantes', icon: 'restaurant', value: experiences.length, img: { data: file.readFileSync("./images/bars/ap11.jpg"), contentType: 'image/jpg' } }
 			],
 			hints: [
 				{
