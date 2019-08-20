@@ -198,20 +198,14 @@ app.get('/myExperiences', (request, response) => {
 				{ title: 'Bares', icon: 'beer', value: experiences.length },
 				{ title: 'Restaurantes', icon: 'restaurant', value: experiences.length, img: { data: file.readFileSync("./images/bars/ap11.jpg"), contentType: 'image/jpg' } }
 			],
-			hints: [
+			statistics: [
 				{
-					name: 'ir ao bar com os guris',
-					date: new Date(),
-					location: 'boteco da república',
-					pic: { data: file.readFileSync("./images/bars/ap11.jpg"), contentType: 'image/jpg' },
-					comment: 'partiu doideraaaa!'
+					name: 'happy hour',
+					value: experiences.length,
 				},
 				{
-					name: 'estudar',
-					date: new Date(),
-					location: 'meu quarto',
-					pic: { data: file.readFileSync("./images/bart-icon.png"), contentType: 'image/png' },
-					comment: 'partiu estudos!'
+					name: 'almoço com os guri',
+					value: experiences.length,
 				}
 			],
 			experiences: experiences.slice().reverse()
@@ -243,6 +237,7 @@ app.post('/experience', async (request, response) => {
 		date: request.body.date,
 		pic: request.body.pic ? { data: imageDataURI.decode('data:'+request.body.pic.contentType+';base64,'+request.body.pic.data).dataBuffer, Buffer, contentType: request.body.pic.contentType } : request.body.pic,
 		comment: request.body.comment,
+		occasion: request.body.occasion,
 		tag: request.body.tag
 	}
 
@@ -274,6 +269,7 @@ app.post('/experience', async (request, response) => {
 						pic: newExperience.pic,
 						pics: newExperience.pic ? [ newExperience.pic ] : [],
 						comments: newExperience.comment ? [ newExperience.comment ]: [],
+						occasions: newExperience.occasion ? [ newExperience.occasion ] : [],
 						tags: newExperience.tag ? [ newExperience.tag ] : []
 					})
 
@@ -300,6 +296,14 @@ app.post('/experience', async (request, response) => {
 							"location.lat": (role.location.lat*role.ratting.rattings + newExperience.location.lat)/(role.ratting.rattings + 1), 
 							"location.lng": (role.location.lng*role.ratting.rattings + newExperience.location.lng)/(role.ratting.rattings + 1) } 
 					}, err => {
+						if (err) {
+							response.send({ message: "Não Éh uz Guri: " + err})
+							throw err
+						}
+					})
+
+				if (request.body.occasion) 
+					RoleModel.update({ name: role.name }, { $addToSet: { occasions: newExperience.occasion } }, err => {
 						if (err) {
 							response.send({ message: "Não Éh uz Guri: " + err})
 							throw err
@@ -392,6 +396,7 @@ var roleSchema = mongoose.Schema({
 	pic: imgSchema,
 	pics: [ imgSchema ],
 	comments: [ String ],
+	occasions: [ String ],
 	tags: [ String ]
 })
 
@@ -406,6 +411,7 @@ var experienceSchema = mongoose.Schema({
 	date: Date,
 	pic: imgSchema,
 	comment: String,
+	occasion: String,
 	tag: String
 })
 
@@ -419,6 +425,7 @@ var ExperienceModel = mongoose.model('experiences', experienceSchema);
 // 	pics: [],
 // 	pic: { data: file.readFileSync("./images/bars/ap11.jpg"), contentType: 'image/jpg' },
 // 	comments: [],
+// 	occasions: [],
 // 	tags: []
 // })
 // var redDoor = new RoleModel({
@@ -428,7 +435,8 @@ var ExperienceModel = mongoose.model('experiences', experienceSchema);
 //     address: 'R. José do Patrocínio, 797 - Cidade Baixa, Porto Alegre - RS',
 // 	pics: [],
 // 	pic: { data: file.readFileSync("./images/bars/redDoor.jpg"), contentType: 'image/jpg' },
-//     comments: [],
+// 	comments: [],
+// 	occasions: [],
 //     tags: []
 // })
 // var voidModel = new RoleModel({
@@ -438,7 +446,8 @@ var ExperienceModel = mongoose.model('experiences', experienceSchema);
 // 	address: 'R. Luciana de Abreu, 364 - Moinhos de Vento, Porto Alegre - RS',
 // 	pics: [],
 //     pic: { data: file.readFileSync("./images/bars/void.jpg"), contentType: 'image/jpg' },
-//     comments: [],
+// 	comments: [],
+// 	occasions: [],
 //     tags: []
 // })
 // ap11Model.save(function(err) { if (err) throw err })
