@@ -429,26 +429,26 @@ var ExperienceModel = mongoose.model('experiences', experienceSchema);
 // 	tags: []
 // })
 // var redDoor = new RoleModel({
-//     name: 'Red Door',
-//     ratting: { rattings: 1, average: 4 },
-//     location: { lat: -30.041674, lng: -51.221539 },
-//     address: 'R. José do Patrocínio, 797 - Cidade Baixa, Porto Alegre - RS',
+//  name: 'Red Door',
+//  ratting: { rattings: 1, average: 4 },
+//  location: { lat: -30.041674, lng: -51.221539 },
+//  address: 'R. José do Patrocínio, 797 - Cidade Baixa, Porto Alegre - RS',
 // 	pics: [ { data: file.readFileSync("./images/bars/redDoor.jpg"), contentType: 'image/jpg' } ],
 // 	pic: 0,
 // 	comments: [],
 // 	occasions: [],
-//     tags: []
+//  tags: []
 // })
 // var voidModel = new RoleModel({
-//     name: 'Void',
-//     ratting: { rattings: 1, average: 4 },
-//     location: { lat: -30.024672, lng: -51.203145 },
+//  name: 'Void',
+//  ratting: { rattings: 1, average: 4 },
+//  location: { lat: -30.024672, lng: -51.203145 },
 // 	address: 'R. Luciana de Abreu, 364 - Moinhos de Vento, Porto Alegre - RS',
 // 	pics: [ { data: file.readFileSync("./images/bars/void.jpg"), contentType: 'image/jpg' } ],
-//     pic: 0,
+//  pic: 0,
 // 	comments: [],
 // 	occasions: [],
-//     tags: []
+//  tags: []
 // })
 // ap11Model.save(function(err) { if (err) throw err })
 // redDoor.save(function(err) { if (err) throw err })
