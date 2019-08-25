@@ -1,4 +1,5 @@
 var url = "https://injoyserver.azurewebsites.net/positions"
+//url = "http://localhost:1000/positions"
 var map
 
 function initMap() {    
@@ -29,7 +30,7 @@ function initMap() {
 									if (user.locals.length > 0) {
 											for(var local of user.locals)
 											{
-													addBart(user.user, local.arrival, local.departure, local.lat, local.lng);
+												addBart(user.user, local.arrival, local.departure, local.lat, local.lng);
 											}
 									}
 								}
@@ -58,17 +59,17 @@ function addBart(user, arrival, departure, lat, lng) {
 
     let googleUrl = "https://maps.googleapis.com/maps/api/place/nearbysearch/json?location=" + lat + "," + lng + "&rankby=distance&type=establishment&key=AIzaSyCf_4B1NNe-B_g1tLpUAr9djlFVgAVrtZk"
 
-    $.ajax({
-        url: googleUrl,
-        type: "GET",
-        dataType: "json",
-        contentType: "application/json; charset=utf-8",
-        success: function(res, status) {
+    // $.ajax({
+    //     url: googleUrl,
+    //     type: "GET",
+    //     dataType: "json",
+    //     contentType: "application/json; charset=utf-8",
+    //     success: function(res, status) {
 
-            if (res.results.length > 2) {
+    //         if (res.results.length > 2) {
 
                 new google.maps.Marker({
-                    title: user + ' entre as ' + new Date(arrival) + ' e as ' + new Date(departure) + ' deve ter ido em: 1: ' + res.results[0].name + " / 2: " + res.results[1].name + " / 3: " + res.results[2].name,
+                    title: user + ' entre as ' + new Date(arrival) + ' e as ' + new Date(departure),// + ' deve ter ido em: 1: ' + res.results[0].name + " / 2: " + res.results[1].name + " / 3: " + res.results[2].name,
                     position: {
                         lat: lat,
                         lng: lng
@@ -78,10 +79,10 @@ function addBart(user, arrival, departure, lat, lng) {
                     map: map
                 }) 
 
-            }
+    //         }
 
-        }
-    })
+    //     }
+    // })
 }
 
 function postLocations() {
