@@ -254,7 +254,7 @@ app.post('/experience', async (request, response) => {
 				location: newExperience.location,
 				address: newExperience.address,
 				ratting: newExperience.ratting ? { average: newExperience.ratting , rattings: 1 } : { average: 5 , rattings: 1 },
-				pic: newExperience.pic ? newExperience.pic : null,
+				pic: newExperience.pic ? 0 : null,
 				pics: newExperience.pic ? [ newExperience.pic ] : [],
 				comments: newExperience.comment ? [ newExperience.comment ]: [],
 				occasions: newExperience.occasion ? [ newExperience.occasion ] : [],
