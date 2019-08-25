@@ -57,52 +57,52 @@ function addLocation(position) {
 		userPositions.push({ user: position.user, currentLocal: { arrival: timeStamp, lng: position.lng, lat: position.lat, samples: 1, departure: null }, locations: [{ lng: position.lng, lat: position.lat, timeStamp: timeStamp}], locals: []});
 	}
 	else {
-			let user = userPositions[index]
-			user.locations.push({ lng: position.lng, lat: position.lat , timeStamp: timeStamp})
-			if (user.locations.length > maxPositionsPerUser) {
-				user.locations.splice(0, 1)
-			}
+		let user = userPositions[index]
+		user.locations.push({ lng: position.lng, lat: position.lat , timeStamp: timeStamp})
+		if (user.locations.length > maxPositionsPerUser) {
+			user.locations.splice(0, 1)
+		}
 
-			let latitudeDifference = Math.abs(position.lat - user.currentLocal.lat)
-			let longitudeDifference = Math.abs(position.lng - user.currentLocal.lng)
-			
-			if (latitudeDifference < latitudeThreshold && longitudeDifference < longitudeThreshold) {
+		let latitudeDifference = Math.abs(position.lat - user.currentLocal.lat)
+		let longitudeDifference = Math.abs(position.lng - user.currentLocal.lng)
+		
+		if (latitudeDifference < latitudeThreshold && longitudeDifference < longitudeThreshold) {
 
-					let lastLatitude = user.currentLocal.lat
-					let lastLongitude = user.currentLocal.lng
-					user.currentLocal.lat = (lastLatitude*user.currentLocal.samples + position.lat) / (user.currentLocal.samples + 1)
-					user.currentLocal.lng = (lastLongitude*user.currentLocal.samples + position.lng) / (user.currentLocal.samples + 1)
-					user.currentLocal.samples++
-					user.currentLocal.departure = timeStamp
+				let lastLatitude = user.currentLocal.lat
+				let lastLongitude = user.currentLocal.lng
+				user.currentLocal.lat = (lastLatitude*user.currentLocal.samples + position.lat) / (user.currentLocal.samples + 1)
+				user.currentLocal.lng = (lastLongitude*user.currentLocal.samples + position.lng) / (user.currentLocal.samples + 1)
+				user.currentLocal.samples++
+				user.currentLocal.departure = timeStamp
 
-					let elapsedTime = user.currentLocal.departure - user.currentLocal.arrival
-					
-					if (elapsedTime > localMinimunInterval*1000) {
-							
-							let newLocal = { arrival: new Date(user.currentLocal.arrival), departure: new Date(user.currentLocal.departure), lat: user.currentLocal.lat, lng: user.currentLocal.lng }
+				let elapsedTime = user.currentLocal.departure - user.currentLocal.arrival
+				
+				if (elapsedTime > localMinimunInterval*1000) {
+						
+						let newLocal = { arrival: new Date(user.currentLocal.arrival), departure: new Date(user.currentLocal.departure), lat: user.currentLocal.lat, lng: user.currentLocal.lng }
 
-							if (user.locals.length > 0) {
+						if (user.locals.length > 0) {
 
-									latitudeDifference = Math.abs(user.currentLocal.lat - user.locals[user.locals.length-1].lat)
-									longitudeDifference = Math.abs(user.currentLocal.lng - user.locals[user.locals.length-1].lng)
+								latitudeDifference = Math.abs(user.currentLocal.lat - user.locals[user.locals.length-1].lat)
+								longitudeDifference = Math.abs(user.currentLocal.lng - user.locals[user.locals.length-1].lng)
 
-									if (latitudeDifference < latitudeThreshold && longitudeDifference < longitudeThreshold) {
-											user.locals[user.locals.length-1].departure = new Date(timeStamp)
-									}
-									else {
-											user.locals.push(newLocal)
-											user.currentLocal = { arrival: timeStamp, lng: position.lng, lat: position.lat, samples: 1, departure: null }
-									}
-							}
-							else {
-									user.locals.push(newLocal)
-									user.currentLocal = { arrival: timeStamp, lng: position.lng, lat: position.lat, samples: 1, departure: null }
-							}
-					}
-			}
-			else {
-					user.currentLocal = { arrival: timeStamp, lng: position.lng, lat: position.lat, samples: 1, departure: null }
-			}
+								if (latitudeDifference < latitudeThreshold && longitudeDifference < longitudeThreshold) {
+										user.locals[user.locals.length-1].departure = new Date(timeStamp)
+								}
+								else {
+										user.locals.push(newLocal)
+										user.currentLocal = { arrival: timeStamp, lng: position.lng, lat: position.lat, samples: 1, departure: null }
+								}
+						}
+						else {
+								user.locals.push(newLocal)
+								user.currentLocal = { arrival: timeStamp, lng: position.lng, lat: position.lat, samples: 1, departure: null }
+						}
+				}
+		}
+		else {
+				user.currentLocal = { arrival: timeStamp, lng: position.lng, lat: position.lat, samples: 1, departure: null }
+		}
 	}
 }
 
@@ -249,10 +249,10 @@ app.post('/experience', async (request, response) => {
 
 			let newRoleModel = new RoleModel({
 				name: newExperience.name,
-				ratting: { average: newExperience.ratting, rattings: 1 },
 				location: newExperience.location,
 				address: newExperience.address,
-				pic: newExperience.pic,
+				ratting: newExperience.ratting ? { average: newExperience.ratting , rattings: 1 } : { average: 5 , rattings: 1 },
+				pic: newExperience.pic ? newExperience.pic : null,
 				pics: newExperience.pic ? [ newExperience.pic ] : [],
 				comments: newExperience.comment ? [ newExperience.comment ]: [],
 				occasions: newExperience.occasion ? [ newExperience.occasion ] : [],
@@ -268,18 +268,19 @@ app.post('/experience', async (request, response) => {
 		}
 		else {
 
-			RoleModel.update({ name: role.name }, { $set: { "ratting.average": (role.ratting.average*role.ratting.rattings + newExperience.ratting)/(role.ratting.rattings + 1), "ratting.rattings": role.ratting.rattings + 1, } }, err => {
-				if (err) {
-					response.send({ message: "Não Éh uz Guri: " + err})
-					throw err
-				}
-			})
-
 			RoleModel.update({ name: role.name }, { 
 				$set: {
 						"location.lat": (role.location.lat*role.ratting.rattings + newExperience.location.lat)/(role.ratting.rattings + 1), 
 						"location.lng": (role.location.lng*role.ratting.rattings + newExperience.location.lng)/(role.ratting.rattings + 1) } 
 				}, err => {
+					if (err) {
+						response.send({ message: "Não Éh uz Guri: " + err})
+						throw err
+					}
+				})
+
+			if (request.body.ratting) 
+				RoleModel.update({ name: role.name }, { $set: { "ratting.average": (role.ratting.average*role.ratting.rattings + newExperience.ratting)/(role.ratting.rattings + 1), "ratting.rattings": role.ratting.rattings + 1, } }, err => {
 					if (err) {
 						response.send({ message: "Não Éh uz Guri: " + err})
 						throw err
@@ -302,13 +303,23 @@ app.post('/experience', async (request, response) => {
 					}
 				})
 
-			if (request.body.pic)
+			if (request.body.pic) {
+				if (!role.pic)
+					RoleModel.update({ name: role.name }, { $set: { pic: newExperience.pic } }, err => {
+						if (err) {
+							response.send({ message: "Não Éh uz Guri: " + err})
+							throw err
+						}
+					})
+
 				RoleModel.update({ name: role.name }, { $push: { pics: newExperience.pic } }, err => {
 					if (err) {
 						response.send({ message: "Não Éh uz Guri: " + err})
 						throw err
 					}
 				})
+			}
+				
 
 			if (request.body.comment)
 				RoleModel.update({ name: role.name }, { $push: { comments: newExperience.comment } }, err => {
