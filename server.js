@@ -53,6 +53,8 @@ function addLocation(position) {
 
 	let timeStamp = position['timeStamp'] ? position['timeStamp'] : Date.now()
 
+	let longitudeThreshold = squaredArea/(geoLocationConstant*Math.cos(position.lng))
+
 	if(index < 0) {
 		userPositions.push({ user: position.user, currentLocal: { arrival: timeStamp, lng: position.lng, lat: position.lat, samples: 1, departure: null }, locations: [{ lng: position.lng, lat: position.lat, timeStamp: timeStamp}], locals: []});
 	}
