@@ -70,40 +70,74 @@ function addLocation(position) {
 		
 		if (latitudeDifference < latitudeThreshold && longitudeDifference < longitudeThreshold) {
 
-				let lastLatitude = user.currentLocal.lat
-				let lastLongitude = user.currentLocal.lng
-				user.currentLocal.lat = (lastLatitude*user.currentLocal.samples + position.lat) / (user.currentLocal.samples + 1)
-				user.currentLocal.lng = (lastLongitude*user.currentLocal.samples + position.lng) / (user.currentLocal.samples + 1)
-				user.currentLocal.samples++
-				user.currentLocal.departure = timeStamp
+			let lastLatitude = user.currentLocal.lat
+			let lastLongitude = user.currentLocal.lng
+			user.currentLocal.lat = (lastLatitude*user.currentLocal.samples + position.lat) / (user.currentLocal.samples + 1)
+			user.currentLocal.lng = (lastLongitude*user.currentLocal.samples + position.lng) / (user.currentLocal.samples + 1)
+			user.currentLocal.samples++
+			user.currentLocal.departure = timeStamp
 
-				let elapsedTime = user.currentLocal.departure - user.currentLocal.arrival
-				
-				if (elapsedTime > localMinimunInterval*1000) {
-						
-						let newLocal = { arrival: new Date(user.currentLocal.arrival), departure: new Date(user.currentLocal.departure), lat: user.currentLocal.lat, lng: user.currentLocal.lng }
+			let elapsedTime = user.currentLocal.departure - user.currentLocal.arrival
+			
+			if (elapsedTime > localMinimunInterval*1000) {
+					
+				let newLocal = { arrival: new Date(user.currentLocal.arrival), departure: new Date(user.currentLocal.departure), lat: user.currentLocal.lat, lng: user.currentLocal.lng }
 
-						if (user.locals.length > 0) {
+				if (user.locals.length > 0) {
 
-								latitudeDifference = Math.abs(user.currentLocal.lat - user.locals[user.locals.length-1].lat)
-								longitudeDifference = Math.abs(user.currentLocal.lng - user.locals[user.locals.length-1].lng)
+					latitudeDifference = Math.abs(user.currentLocal.lat - user.locals[user.locals.length-1].lat)
+					longitudeDifference = Math.abs(user.currentLocal.lng - user.locals[user.locals.length-1].lng)
+
+					if (latitudeDifference < latitudeThreshold && longitudeDifference < longitudeThreshold) {
+						user.locals[user.locals.length-1].departure = new Date(timeStamp)
+					}
+					else {
+
+						ExperienceModel.find({ user: user.user }, function(err, experiences) { 
+							if (err) {
+								response.send({ message: "Não Éh uz Guri: " + err})
+								throw err
+							}
+
+							for (let i = 0; i < experiences.length; i++) {
+								
+								latitudeDifference = Math.abs(user.locals[user.locals.length-1].lat - experiences[i].location.lat)
+								longitudeDifference = Math.abs(user.locals[user.locals.length-1].lng - experiences[i].location.lng)
 
 								if (latitudeDifference < latitudeThreshold && longitudeDifference < longitudeThreshold) {
-										user.locals[user.locals.length-1].departure = new Date(timeStamp)
+									let newExperience = {
+										user: user.user,
+										name: experiences[i].name,
+										address: experiences[i].address,
+										location: { lat: user.locals[user.locals.length-1].lat, lng: user.locals[user.locals.length-1].lng },
+										date: new Date(timeStamp),
+									}
+
+									let newExperienceModel = new ExperienceModel(newExperience)
+									newExperienceModel.save(err => { 
+										if (err) {
+											response.send({ message: "Não Éh uz Guri: " + err})
+											throw err
+										}
+									})
+
+									return
 								}
-								else {
-										user.locals.push(newLocal)
-										user.currentLocal = { arrival: timeStamp, lng: position.lng, lat: position.lat, samples: 1, departure: null }
-								}
-						}
-						else {
-								user.locals.push(newLocal)
-								user.currentLocal = { arrival: timeStamp, lng: position.lng, lat: position.lat, samples: 1, departure: null }
-						}
+							} 
+						})
+
+						user.locals.push(newLocal)
+						user.currentLocal = { arrival: timeStamp, lng: position.lng, lat: position.lat, samples: 1, departure: null }
+					}
 				}
+				else {
+					user.locals.push(newLocal)
+					user.currentLocal = { arrival: timeStamp, lng: position.lng, lat: position.lat, samples: 1, departure: null }
+				}
+			}
 		}
 		else {
-				user.currentLocal = { arrival: timeStamp, lng: position.lng, lat: position.lat, samples: 1, departure: null }
+			user.currentLocal = { arrival: timeStamp, lng: position.lng, lat: position.lat, samples: 1, departure: null }
 		}
 	}
 }
