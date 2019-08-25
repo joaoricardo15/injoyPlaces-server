@@ -236,7 +236,7 @@ app.post('/experience', async (request, response) => {
 		location: request.body.location,
 		address: request.body.address,
 		date: request.body.date,
-		pic: request.body.pic ? { data: imageDataURI.decode('data:'+request.body.pic.contentType+';base64,'+request.body.pic.data).dataBuffer, Buffer, contentType: request.body.pic.contentType } : request.body.pic,
+		pic: request.body.pic ? { data: imageDataURI.decode('data:'+request.body.pic.contentType+';base64,'+request.body.pic.data).dataBuffer, Buffer, contentType: request.body.pic.contentType } : null,
 		comment: request.body.comment,
 		occasion: request.body.occasion,
 		tag: request.body.tag
@@ -306,8 +306,8 @@ app.post('/experience', async (request, response) => {
 				})
 
 			if (request.body.pic) {
-				if (!role.pic)
-					RoleModel.update({ name: role.name }, { $set: { pic: newExperience.pic } }, err => {
+				if (role.pic !== 0)
+					RoleModel.update({ name: role.name }, { $set: { pic: 0 } }, err => {
 						if (err) {
 							response.send({ message: "Não Éh uz Guri: " + err})
 							throw err
