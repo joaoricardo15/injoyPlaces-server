@@ -190,27 +190,118 @@ app.get('/myExperiences', (request, response) => {
 			throw err
 		}
 
-		response.send({
+		myExperiences = {
 			achievements: [
-				{ title: 'Rolezeiro', message: '3 rolês essa semana, e contando...' },
-				{ title: 'Gourmet', message: 'mais 10 restaurantes conceituados na cidade' },
-				{ title: 'Experiências', icon: 'pin', value: experiences.length },
-				{ title: 'Descobertas', icon: 'trophy', value: experiences.length },
-			],
-			statistics: [
-				{
-					name: 'happy hour',
-					img: { data: file.readFileSync("./images/bart-icon.png"), contentType: 'image/jpg' },
-					value: experiences.length,
+				{ 
+					title: 'Newbie',
+					subtitle: 'Você foi um dos early adopters do InJoy',
+					message: 'Título de Newbie. Você foi um dos primeiros a utilizar o InJoy' 
 				},
-				{
-					name: 'almoço com os guri',
-					img: { data: file.readFileSync("./images/homer-icon.png"), contentType: 'image/jpg' },
-					value: experiences.length,
-				}
+				{ 
+					title: 'Descobridor', 
+					icon: 'compass', 
+					value: experiences.length > 0 ? experiences.length : null,
+					message: 'Troféu Descobridor. Para conquistá-lo, você precisa adicionar no mínimo 3 novos rolês' 
+				},
+				{ 
+					title: 'Gourmet', 
+					icon: 'restaurant',
+					message: 'Troféu Gourmet. Para conquistá-lo, você precisa regsitrar no mínimo 10 experiências em restaurantes conceituados na cidade' 
+				},
+				{ 
+					title: 'Bebedeira', 
+					icon: 'beer', 
+					message: 'Troféu Bebedeira. Para conquistá-lo, você precisa registrar no mínimo 3 experiências em bares dentro de uma semana!' 
+				},
+				{ 
+					title: 'Rolezeiro', 
+					icon: 'flame', 
+					message: 'Troféu Rolezeiro. Para conquistá-lo, você precisa registrar no mínimo 3 experiências dentro de uma semana!' 
+				},
+				{ 
+					title: 'Blogueiro', 
+					icon: 'camera', 
+					message: 'Troféu Blogueiro. Para conquistá-lo, você precisa registrar no mínimo 3 experiências com foto' 
+				},
+				{ 
+					title: 'Avaliador', 
+					icon: 'thumbs-up', 
+					message: 'Troféu Avaliador. Para conquistá-lo, você precisa registrar no mínimo 3 experiências com avaliação!' 
+				},
+				{ 
+					title: 'Viajante', 
+					icon: 'globe', 
+					message: 'Troféu Viajante. Para conquistá-lo, você precisa registrar no mínimo 3 experiências em regiões diferentes' 
+				},
 			],
 			experiences: experiences.slice().reverse()
-		})
+		}
+
+		statistics = [
+			{
+				name: 'Experiências',
+				img: { data: file.readFileSync("./images/homer-icon.png"), contentType: 'image/jpg' },
+				value: experiences.length
+			}
+		]
+
+		let rattings = 0
+		let occasions = 0
+		let tags = 0
+		let pics = 0
+		let comments = 0
+
+		for (let i = 0; i < experiences.length; i++) {
+			if (experiences[i].ratting)
+				rattings++
+			if (experiences[i].occasion)
+				occasions++
+			if (experiences[i].tag)
+				tags++
+			if (experiences[i].pic)
+				pics++
+			if (experiences[i].comment)
+				comments++
+		}
+
+		if (rattings > 0)
+			statistics.push({
+				name: 'Avaliações',
+				img: { data: file.readFileSync("./images/bart-icon.png"), contentType: 'image/jpg' },
+				value: rattings,
+			})
+
+		if (occasions > 0)
+			statistics.push({
+				name: 'Ocasiões',
+				img: { data: file.readFileSync("./images/bart-icon.png"), contentType: 'image/jpg' },
+				value: occasions,
+			})	
+
+		if (tags > 0)
+			statistics.push({
+				name: '#hashtags',
+				img: { data: file.readFileSync("./images/bart-icon.png"), contentType: 'image/jpg' },
+				value: tags,
+			})
+			
+		if (pics > 0)
+			statistics.push({
+				name: 'Fotos',
+				img: { data: file.readFileSync("./images/bart-icon.png"), contentType: 'image/jpg' },
+				value: pics,
+			})
+		
+		if (comments > 0)
+			statistics.push({
+				name: 'Comentários',
+				img: { data: file.readFileSync("./images/bart-icon.png"), contentType: 'image/jpg' },
+				value: comments,
+			})
+		
+		myExperiences['statistics'] = statistics
+
+		response.send(myExperiences)
 	});
 })
 
