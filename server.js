@@ -33,6 +33,11 @@ var userPositions = []
 const maxPositionsPerUser = 1000
 const localMinimunInterval = 600
 
+
+const squaredArea = 50
+const geoLocationConstant = 111120
+const latitudeThreshold = squaredArea/geoLocationConstant
+
 app.post('/positions', function(req, res) {
 	for (let i = 0; i < req.body.length; i++) { addLocation(req.body[i]) }
     res.send({ message: 'É uz Guri' })
@@ -99,6 +104,8 @@ function addLocation(position) {
 								throw err
 							}
 
+							let longitudeThreshold = squaredArea/(geoLocationConstant*Math.cos(user.locals[user.locals.length-1].lng))
+
 							for (let i = 0; i < experiences.length; i++) {
 								
 								latitudeDifference = Math.abs(user.locals[user.locals.length-1].lat - experiences[i].location.lat)
@@ -145,10 +152,6 @@ function addLocation(position) {
 //////////////////////////////////////////////////////////
 // http operations for injoyInterface
 //////////////////////////////////////////////////////////
-
-const squaredArea = 50
-const geoLocationConstant = 111120
-const latitudeThreshold = squaredArea/geoLocationConstant
 
 app.get('/user', (request, response) => {
 
@@ -595,3 +598,41 @@ var ExperienceModel = mongoose.model('experiences', experienceSchema);
 // ap11Model.save(function(err) { if (err) throw err })
 // redDoor.save(function(err) { if (err) throw err })
 // voidModel.save(function(err) { if (err) throw err })
+
+// var user = { user: 'dao', locals: [{ lat: -30.029389807692308, lng: -51.20783051538462 }] }
+// var timeStamp = Date.now()
+
+// ExperienceModel.find({ user: user.user }, function(err, experiences) { 
+// 	if (err) {
+// 		response.send({ message: "Não Éh uz Guri: " + err})
+// 		throw err
+// 	}
+
+// 	let longitudeThreshold = squaredArea/(geoLocationConstant*Math.cos(user.locals[user.locals.length-1].lng))
+
+// 	for (let i = 0; i < experiences.length; i++) {
+		
+// 		latitudeDifference = Math.abs(user.locals[user.locals.length-1].lat - experiences[i].location.lat)
+// 		longitudeDifference = Math.abs(user.locals[user.locals.length-1].lng - experiences[i].location.lng)
+
+// 		if (latitudeDifference < latitudeThreshold && longitudeDifference < longitudeThreshold) {
+// 			let newExperience = {
+// 				user: user.user,
+// 				name: experiences[i].name,
+// 				address: experiences[i].address,
+// 				location: { lat: user.locals[user.locals.length-1].lat, lng: user.locals[user.locals.length-1].lng },
+// 				date: new Date(timeStamp),
+// 			}
+
+// 			let newExperienceModel = new ExperienceModel(newExperience)
+// 			newExperienceModel.save(err => { 
+// 				if (err) {
+// 					response.send({ message: "Não Éh uz Guri: " + err})
+// 					throw err
+// 				}
+// 			})
+
+// 			return
+// 		}
+// 	} 
+// })
