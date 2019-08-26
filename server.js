@@ -75,6 +75,7 @@ function addLocation(position) {
 		
 		if (latitudeDifference < latitudeThreshold && longitudeDifference < longitudeThreshold) {
 
+			// se eu estou permanecendo em um local
 			let lastLatitude = user.currentLocal.lat
 			let lastLongitude = user.currentLocal.lng
 			user.currentLocal.lat = (lastLatitude*user.currentLocal.samples + position.lat) / (user.currentLocal.samples + 1)
@@ -86,60 +87,43 @@ function addLocation(position) {
 			
 			if (elapsedTime > localMinimunInterval*1000) {
 					
+				// se eu já estou neste lugar à mais de 10min
 				let newLocal = { arrival: new Date(user.currentLocal.arrival), departure: new Date(user.currentLocal.departure), lat: user.currentLocal.lat, lng: user.currentLocal.lng }
 
 				if (user.locals.length > 0) {
 
+					// se já existem locais na minha lista
 					latitudeDifference = Math.abs(user.currentLocal.lat - user.locals[user.locals.length-1].lat)
 					longitudeDifference = Math.abs(user.currentLocal.lng - user.locals[user.locals.length-1].lng)
 
 					if (latitudeDifference < latitudeThreshold && longitudeDifference < longitudeThreshold) {
+
+						// se o local onde eu estou já foi adicionado, atualizo-o
 						user.locals[user.locals.length-1].departure = new Date(timeStamp)
 					}
 					else {
 
-						ExperienceModel.find({ user: user.user }, function(err, experiences) { 
-							if (err) {
-								response.send({ message: "Não Éh uz Guri: " + err})
-								throw err
-							}
-
-							let longitudeThreshold = squaredArea/(geoLocationConstant*Math.cos(user.locals[user.locals.length-1].lng))
-
-							for (let i = 0; i < experiences.length; i++) {
-								
-								latitudeDifference = Math.abs(user.locals[user.locals.length-1].lat - experiences[i].location.lat)
-								longitudeDifference = Math.abs(user.locals[user.locals.length-1].lng - experiences[i].location.lng)
-
-								if (latitudeDifference < latitudeThreshold && longitudeDifference < longitudeThreshold) {
-									let newExperience = {
-										user: user.user,
-										name: experiences[i].name,
-										address: experiences[i].address,
-										location: { lat: user.locals[user.locals.length-1].lat, lng: user.locals[user.locals.length-1].lng },
-										date: new Date(timeStamp),
-									}
-
-									let newExperienceModel = new ExperienceModel(newExperience)
-									newExperienceModel.save(err => { 
-										if (err) {
-											response.send({ message: "Não Éh uz Guri: " + err})
-											throw err
-										}
-									})
-
-									return
-								}
-							} 
-						})
-
+						// adiciono o meu locoal atual à lista 'meus locais' 
 						user.locals.push(newLocal)
 						user.currentLocal = { arrival: timeStamp, lng: position.lng, lat: position.lat, samples: 1, departure: null }
+
+						// adiciono uma nova experiência ao usuário
+						addExperience(user.user, user.currentLocal.lat, user.currentLocal.lng, user.currentLocal.arrival)
 					}
 				}
 				else {
+
+					// adiciono o meu locoal atual à lista 'meus locais' 
 					user.locals.push(newLocal)
 					user.currentLocal = { arrival: timeStamp, lng: position.lng, lat: position.lat, samples: 1, departure: null }
+
+					//restrinjo a quantidade de locais a 100 elementos
+					if (user.locals.length > maxPositionsPerUser) {
+						user.locals.splice(0, 1)
+					}
+
+					// adiciono uma nova experiência ao usuário
+					addExperience(user.user, user.currentLocal.lat, user.currentLocal.lng, user.currentLocal.arrival)
 				}
 			}
 		}
@@ -147,6 +131,44 @@ function addLocation(position) {
 			user.currentLocal = { arrival: timeStamp, lng: position.lng, lat: position.lat, samples: 1, departure: null }
 		}
 	}
+}
+
+function addExperience(user, localLat, localLng, arrivalTime) {
+
+	ExperienceModel.find({ user: user }, function(err, experiences) { 
+		if (err) {
+			response.send({ message: "Não Éh uz Guri: " + err})
+			throw err
+		}
+
+		let longitudeThreshold = squaredArea/(geoLocationConstant*Math.cos(localLng))
+
+		for (let i = 0; i < experiences.length; i++) {
+			
+			latitudeDifference = Math.abs(localLat - experiences[i].location.lat)
+			longitudeDifference = Math.abs(localLng - experiences[i].location.lng)
+
+			if (latitudeDifference < latitudeThreshold && longitudeDifference < longitudeThreshold) {
+				let newExperience = {
+					user: user,
+					name: experiences[i].name,
+					address: experiences[i].address,
+					location: { lat: localLat, lng: localLng },
+					date: new Date(arrivalTime),
+				}
+
+				let newExperienceModel = new ExperienceModel(newExperience)
+				newExperienceModel.save(err => { 
+					if (err) {
+						response.send({ message: "Não Éh uz Guri: " + err})
+						throw err
+					}
+				})
+
+				return
+			}
+		} 
+	})
 }
 
 //////////////////////////////////////////////////////////
