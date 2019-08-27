@@ -174,7 +174,7 @@ function addExperience(user, localLat, localLng, arrival, departure) {
 
 function updateExperience(user, departure) {
 	ExperienceModel.update({
-		$and: [ { user: user }, { $last:  } ]}, {
+		$and: [ { user: user } ]}, {
 		$set: { "departure": departure } }, 
 		err => {
 			if (err) {
