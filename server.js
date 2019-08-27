@@ -108,7 +108,7 @@ function addLocation(position) {
 						user.currentLocal = { arrival: timeStamp, lng: position.lng, lat: position.lat, samples: 1, departure: null }
 
 						// adiciono uma nova experiência ao usuário
-						addExperience(user.user, user.currentLocal.lat, user.currentLocal.lng, user.currentLocal.arrival)
+						addExperience(user.user, user.currentLocal.lat, user.currentLocal.lng, user.currentLocal.arrival, user.currentLocal.departure)
 					}
 				}
 				else {
