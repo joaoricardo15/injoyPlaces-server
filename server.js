@@ -123,7 +123,7 @@ function addLocation(position) {
 					}
 
 					// adiciono uma nova experiência ao usuário
-					addExperience(user.user, user.currentLocal.lat, user.currentLocal.lng, user.currentLocal.arrival)
+					addExperience(user.user, user.currentLocal.lat, user.currentLocal.lng, user.currentLocal.arrival, user.currentLocal.departure)
 				}
 			}
 		}
@@ -133,7 +133,7 @@ function addLocation(position) {
 	}
 }
 
-function addExperience(user, localLat, localLng, arrivalTime) {
+function addExperience(user, localLat, localLng, arrival, departure) {
 
 	ExperienceModel.find({ user: user }, function(err, experiences) { 
 		if (err) {
@@ -154,7 +154,8 @@ function addExperience(user, localLat, localLng, arrivalTime) {
 					name: experiences[i].name,
 					address: experiences[i].address,
 					location: { lat: localLat, lng: localLng },
-					date: new Date(arrivalTime),
+					arrival: new Date(arrival),
+					departure: new Date(departure)
 				}
 
 				let newExperienceModel = new ExperienceModel(newExperience)
@@ -169,6 +170,18 @@ function addExperience(user, localLat, localLng, arrivalTime) {
 			}
 		} 
 	})
+}
+
+function updateExperience(user, departure) {
+	ExperienceModel.update({
+		$and: [ { user: user }, { $last:  } ]}, {
+		$set: { "departure": departure } }, 
+		err => {
+			if (err) {
+				response.send({ message: "Não Éh uz Guri: " + err})
+				throw err
+			}
+		})
 }
 
 //////////////////////////////////////////////////////////
@@ -229,7 +242,7 @@ app.get('/rolesAround', (request, response) => {
 			{ "location.lng": { $lt: location.lng + longitudeThreshold } },
 			{ "location.lng": { $gt: location.lng - longitudeThreshold } } ] } ) //, (err, roles) => { 
 		.sort({ "ratting.rattings": -1})
-		.limit(10)
+		.limit(20)
 		.then(roles => { 
 			response.send(roles)
 		})
@@ -548,6 +561,8 @@ var experienceSchema = mongoose.Schema({
 	location: locationSchema,
 	address: addressSchema,
 	date: Date,
+	arrival: Date,
+	departure: Date,
 	pic: imgSchema,
 	comment: String,
 	occasion: String,
