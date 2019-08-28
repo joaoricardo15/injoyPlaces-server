@@ -263,49 +263,6 @@ app.get('/myExperiences', (request, response) => {
 		}
 
 		myExperiences = {
-			achievements: [
-				{ 
-					title: 'Newbie',
-					subtitle: 'Você foi um dos early adopters do InJoy',
-					message: 'Título de Newbie. Você foi um dos primeiros a utilizar o InJoy' 
-				},
-				{ 
-					title: 'Descobridor', 
-					icon: 'compass', 
-					value: experiences.length > 0 ? experiences.length : null,
-					message: 'Troféu Descobridor. Para conquistá-lo, você precisa adicionar no mínimo 3 novos rolês' 
-				},
-				{ 
-					title: 'Gourmet', 
-					icon: 'restaurant',
-					message: 'Troféu Gourmet. Para conquistá-lo, você precisa regsitrar no mínimo 10 experiências em restaurantes conceituados na cidade' 
-				},
-				{ 
-					title: 'Bebedeira', 
-					icon: 'beer', 
-					message: 'Troféu Bebedeira. Para conquistá-lo, você precisa registrar no mínimo 3 experiências em bares dentro de uma semana!' 
-				},
-				{ 
-					title: 'Rolezeiro', 
-					icon: 'flame', 
-					message: 'Troféu Rolezeiro. Para conquistá-lo, você precisa registrar no mínimo 3 experiências dentro de uma semana!' 
-				},
-				{ 
-					title: 'Blogueiro', 
-					icon: 'camera', 
-					message: 'Troféu Blogueiro. Para conquistá-lo, você precisa registrar no mínimo 3 experiências com foto' 
-				},
-				{ 
-					title: 'Avaliador', 
-					icon: 'thumbs-up', 
-					message: 'Troféu Avaliador. Para conquistá-lo, você precisa registrar no mínimo 3 experiências com avaliação!' 
-				},
-				{ 
-					title: 'Viajante', 
-					icon: 'globe', 
-					message: 'Troféu Viajante. Para conquistá-lo, você precisa registrar no mínimo 3 experiências em regiões diferentes' 
-				},
-			],
 			experiences: experiences.slice().reverse()
 		}
 
@@ -337,12 +294,14 @@ app.get('/myExperiences', (request, response) => {
 		})
 
 
-		if (rattings > 0)
+		if (rattings > 0) {
 			statistics.push({
 				name: 'Avaliações',
 				img: { data: file.readFileSync("./images/icons/ratting.png"), contentType: 'image/jpg' },
 				value: rattings,
 			})
+		}
+			
 
 		if (occasions > 0)
 			statistics.push({
@@ -371,6 +330,52 @@ app.get('/myExperiences', (request, response) => {
 				img: { data: file.readFileSync("./images/icons/comments.jpg"), contentType: 'image/jpg' },
 				value: comments,
 			})
+
+		achievements: [
+			{ 
+				title: 'Early Adopter',
+				subtitle: 'Você foi um dos primeiros usuários a utilizar o InJoy',
+				message: '' 
+			},
+			{ 
+				title: 'Descobridor', 
+				icon: 'compass', 
+				value: experiences.length > 3 ? experiences.length : null,
+				message: 'Troféu Descobridor. Para conquistá-lo, você precisa adicionar no mínimo 3 novos rolês' 
+			},
+			{ 
+				title: 'Gourmet', 
+				icon: 'restaurant',
+				message: 'Troféu Gourmet. Para conquistá-lo, você precisa registrar no mínimo 10 experiências em restaurantes conceituados da cidade' 
+			},
+			{ 
+				title: 'Bebedeira', 
+				icon: 'beer', 
+				message: 'Troféu Bebedeira. Para conquistá-lo, você precisa registrar no mínimo 3 experiências em bares dentro de uma semana!' 
+			},
+			{ 
+				title: 'Rolezeiro', 
+				icon: 'flame', 
+				message: 'Troféu Rolezeiro. Para conquistá-lo, você precisa registrar no mínimo 3 experiências dentro de uma semana!' 
+			},
+			{ 
+				title: 'Blogueiro', 
+				icon: 'camera', 
+				value: pics > 2 ? 1 : null,
+				message: 'Troféu Blogueiro. Para conquistá-lo, você precisa registrar no mínimo 3 experiências com foto' 
+			},
+			{ 
+				title: 'Avaliador', 
+				icon: 'thumbs-up', 
+				value: rattings > 2 ? 1 : null,
+				message: 'Troféu Avaliador. Para conquistá-lo, você precisa registrar no mínimo 3 experiências com avaliação!' 
+			},
+			{ 
+				title: 'Viajante', 
+				icon: 'globe', 
+				message: 'Troféu Viajante. Para conquistá-lo, você precisa registrar no mínimo 3 experiências em regiões diferentes' 
+			},
+		]
 		
 		myExperiences['statistics'] = statistics
 
