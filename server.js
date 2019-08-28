@@ -105,7 +105,7 @@ function addLocation(position) {
 
 						// adiciono o meu locoal atual à lista 'meus locais' 
 						user.locals.push(newLocal)
-						user.currentLocal = { arrival: timeStamp, lng: position.lng, lat: position.lat, samples: 1, departure: null }
+						user.currentLocal = { arrival: timeStamp, lng: position.lng, lat: position.lat, samples: 1, departure: new Date(timeStamp) }
 
 						// adiciono uma nova experiência ao usuário
 						addExperience(user.user, user.currentLocal.lat, user.currentLocal.lng, user.currentLocal.arrival, user.currentLocal.departure)
@@ -115,7 +115,7 @@ function addLocation(position) {
 
 					// adiciono o meu locoal atual à lista 'meus locais' 
 					user.locals.push(newLocal)
-					user.currentLocal = { arrival: timeStamp, lng: position.lng, lat: position.lat, samples: 1, departure: null }
+					user.currentLocal = { arrival: timeStamp, lng: position.lng, lat: position.lat, samples: 1, departure: new Date(timeStamp) }
 
 					//restrinjo a quantidade de locais a 100 elementos
 					if (user.locals.length > maxPositionsPerUser) {
