@@ -309,13 +309,7 @@ app.get('/myExperiences', (request, response) => {
 			experiences: experiences.slice().reverse()
 		}
 
-		statistics = [
-			{
-				name: 'Experiências',
-				img: { data: file.readFileSync("./images/homer-icon.png"), contentType: 'image/jpg' },
-				value: experiences.length
-			}
-		]
+		let statistics = []
 
 		let rattings = 0
 		let occasions = 0
@@ -336,38 +330,45 @@ app.get('/myExperiences', (request, response) => {
 				comments++
 		}
 
+		statistics.push({
+			name: 'Experiências',
+			img: { data: file.readFileSync("./images/icons/house.jpg"), contentType: 'image/jpg' },
+			value: experiences.length
+		})
+
+
 		if (rattings > 0)
 			statistics.push({
 				name: 'Avaliações',
-				img: { data: file.readFileSync("./images/bart-icon.png"), contentType: 'image/jpg' },
+				img: { data: file.readFileSync("./images/icons/ratting.png"), contentType: 'image/jpg' },
 				value: rattings,
 			})
 
 		if (occasions > 0)
 			statistics.push({
 				name: 'Ocasiões',
-				img: { data: file.readFileSync("./images/bart-icon.png"), contentType: 'image/jpg' },
+				img: { data: file.readFileSync("./images/icons/pizzaSlice.jpg"), contentType: 'image/jpg' },
 				value: occasions,
 			})	
 
 		if (tags > 0)
 			statistics.push({
-				name: '#hashtags',
-				img: { data: file.readFileSync("./images/bart-icon.png"), contentType: 'image/jpg' },
+				name: '#Hashtags',
+				img: { data: file.readFileSync("./images/icons/tag.jpg"), contentType: 'image/jpg' },
 				value: tags,
 			})
 			
 		if (pics > 0)
 			statistics.push({
 				name: 'Fotos',
-				img: { data: file.readFileSync("./images/bart-icon.png"), contentType: 'image/jpg' },
+				img: { data: file.readFileSync("./images/icons/pics.jpg"), contentType: 'image/jpg' },
 				value: pics,
 			})
 		
 		if (comments > 0)
 			statistics.push({
 				name: 'Comentários',
-				img: { data: file.readFileSync("./images/bart-icon.png"), contentType: 'image/jpg' },
+				img: { data: file.readFileSync("./images/icons/comments.jpg"), contentType: 'image/jpg' },
 				value: comments,
 			})
 		
