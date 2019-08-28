@@ -108,7 +108,7 @@ function addLocation(position) {
 						user.currentLocal = { arrival: timeStamp, lng: position.lng, lat: position.lat, samples: 1, departure: new Date(timeStamp) }
 
 						// adiciono uma nova experiência ao usuário
-						addExperience(user.user, user.currentLocal.lat, user.currentLocal.lng, user.currentLocal.arrival, user.currentLocal.departure)
+						addExperience(user.user, user.newLocal.lat, user.newLocal.lng, user.newLocal.arrival, user.newLocal.departure)
 					}
 				}
 				else {
@@ -123,7 +123,7 @@ function addLocation(position) {
 					}
 
 					// adiciono uma nova experiência ao usuário
-					addExperience(user.user, user.currentLocal.lat, user.currentLocal.lng, user.currentLocal.arrival, user.currentLocal.departure)
+					addExperience(user.user, user.newLocal.lat, user.newLocal.lng, user.newLocal.arrival, user.newLocal.departure)
 				}
 			}
 		}
