@@ -378,6 +378,7 @@ app.get('/myExperiences', (request, response) => {
 		]
 		
 		myExperiences['statistics'] = statistics
+		myExperiences['achievements'] = achievements
 
 		response.send(myExperiences)
 	});
