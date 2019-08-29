@@ -3,13 +3,9 @@
 //////////////////////////////////////////////////////////
 
 var mongoose = require('mongoose')
-  , file = require('fs')
 
-// mongoose.connect('mongodb://injoyserverdb.documents.azure.com:10255/injoy?ssl=true', { auth: { user: 'injoyserverdb', password: 'eiHlZ9VM4595rukD7x58HrW0rHTLZZRElLwFadq4qj70HRXfzP4N9RKeOVq7acyHrMYoMt3iqeeSbudYF4sJhA==' }})
-//   .then(() => { console.log('Mongoose is connected to MongoDb on 27017') })
-//   .catch(err => { console.log('error: '+err) })
-
-mongoose.connect('mongodb://localhost')
+mongoose.connect('mongodb://injoyserverdb.documents.azure.com:10255/injoy?ssl=true', { auth: { user: 'injoyserverdb', password: 'eiHlZ9VM4595rukD7x58HrW0rHTLZZRElLwFadq4qj70HRXfzP4N9RKeOVq7acyHrMYoMt3iqeeSbudYF4sJhA==' }})
+//mongoose.connect('mongodb://localhost')
   .then(() => { console.log('Mongoose is connected to MongoDb on 27017') })
   .catch(err => { console.log('error: '+err) })
 
@@ -68,6 +64,7 @@ module.exports = {
 	ExperienceModel: ExperienceModel
 }
 
+// var file = require('fs')
 // var ap11Model = new RoleModel({
 // 	name: 'Ap11',
 // 	ratting: { rattings: 1, average: 5 },
