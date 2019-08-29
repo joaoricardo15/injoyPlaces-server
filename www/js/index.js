@@ -1,5 +1,6 @@
-var url = "https://injoyserver.azurewebsites.net/positions"
-//url = "http://localhost:1000/positions"
+//url = "https://injoyserver.azurewebsites.net/positions"
+url = "http://localhost:1000/positions"
+
 var map
 
 function initMap() {    
