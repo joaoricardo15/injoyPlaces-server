@@ -14,7 +14,7 @@ app.use(function(req, res, next) {
     res.header("Access-Control-Allow-Origin", "*")
     res.header("Access-Control-Allow-Headers", "Origin, X-Requested-With, Content-Type, Accept")
     next()
-});
+})
 
 //////////////////////////////////////////////////////////
 // http server connection
@@ -38,10 +38,6 @@ app.listen(port, function (error) {
 // http server methods
 //////////////////////////////////////////////////////////
 
-app.get('/positions', function(request, response) {
-    response.send(geolocation.userPositions)
-})
-
 app.get('/user', (request, response) => {
 
 	mongo.UserModel.find({ user: request.query.user }, function(err, users) { 
@@ -52,6 +48,10 @@ app.get('/user', (request, response) => {
 
 		response.send(users)
 	});
+})
+
+app.get('/positions', function(request, response) {
+	response.send(geolocation.userPositions)
 })
 
 app.get('/rolesForMe', (request, response) => {
@@ -101,11 +101,6 @@ app.get('/myExperiences', (request, response) => {
 	});
 })
 
-app.post('/positions', function(request, response) {
-	for (let i = 0; i < request.body.length; i++) { geolocation.addLocation(request.body[i]) }
-    response.send({ message: 'É uz Guri' })
-})
-
 app.post('/user', (request, response) => { 
 
 	let newUserModel = new mongo.UserModel(request.body)
@@ -117,6 +112,11 @@ app.post('/user', (request, response) => {
 
 		response.send({ message: "Éh uz Guri"})
 	})
+})
+
+app.post('/positions', function(request, response) {
+	for (let i = 0; i < request.body.length; i++) { geolocation.addLocation(request.body[i]) }
+    response.send({ message: 'É uz Guri' })
 })
 
 app.post('/experience', async (request, response) => { 
