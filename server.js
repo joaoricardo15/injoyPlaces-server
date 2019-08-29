@@ -331,7 +331,7 @@ app.get('/myExperiences', (request, response) => {
 				value: comments,
 			})
 
-		achievements: [
+		let achievements = [
 			{ 
 				title: 'Early Adopter',
 				subtitle: 'Você foi um dos primeiros usuários a utilizar o InJoy',
