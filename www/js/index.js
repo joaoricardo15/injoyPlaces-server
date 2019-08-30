@@ -1,5 +1,6 @@
+url = "http://injoyserver-env.x2mviib6hg.us-east-1.elasticbeanstalk.com"
 //url = "https://injoyserver.azurewebsites.net/positions"
-url = "http://localhost:1000/positions"
+//url = "http://localhost:1000/positions"
 
 var map
 
