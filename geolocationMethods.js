@@ -16,7 +16,7 @@ var mongo = require('./mongo')
 
 var userPositions = []
 const maxPositionsPerUser = 1000
-const localMinimunInterval = 1//600
+const localMinimunInterval = 600
 
 const squaredArea = 50
 const geoLocationConstant = 111120
