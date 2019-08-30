@@ -5,13 +5,15 @@
 var mongoose = require('mongoose')
 
 mongoose.connect('mongodb://injoyserverdb.documents.azure.com:10255/injoy?ssl=true', { auth: { user: 'injoyserverdb', password: 'eiHlZ9VM4595rukD7x58HrW0rHTLZZRElLwFadq4qj70HRXfzP4N9RKeOVq7acyHrMYoMt3iqeeSbudYF4sJhA==' }})
+//mongoose.connect('mongodb://injoydb.ce1xg1mn2hdc.us-east-1.docdb.amazonaws.com:27017', { auth: { user: 'dao', password: 'Joao2020' }})
 //mongoose.connect('mongodb://localhost')
-  .then(() => { console.log('Mongoose is connected to MongoDb on 27017') })
-  .catch(err => { console.log('error: '+err) })
+	.then(() => { console.log('Mongoose is connected to MongoDb on 27017') })
+	.catch(err => { console.log('error: '+err) })	
 
 var db = mongoose.connection;
 db.on('error', console.error.bind(console, 'connection error:'));
 db.once('open', function() { console.log('connected to mongo') });
+
 
 //////////////////////////////////////////////////////////
 // data base models
