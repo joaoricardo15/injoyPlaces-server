@@ -38,6 +38,18 @@ app.listen(port, function (error) {
 // http server methods
 //////////////////////////////////////////////////////////
 
+app.get('/users', (request, response) => {
+
+	mongo.UserModel.find(function(err, users) { 
+		if (err) {
+			response.send({ message: "Não Éh uz Guri: " + err})
+			throw err
+		}
+
+		response.send(users)
+	});
+})
+
 app.get('/user', (request, response) => {
 
 	mongo.UserModel.find({ user: request.query.user }, function(err, users) { 
@@ -50,8 +62,68 @@ app.get('/user', (request, response) => {
 	});
 })
 
-app.get('/positions', function(request, response) {
+app.post('/user', (request, response) => { 
+
+	let newUserModel = new mongo.UserModel(request.body)
+	newUserModel.save(err => {
+		if (err) {
+			response.send({ message: "Não Éh uz Guri: " + err})
+			throw err
+		}
+
+		response.send({ message: "Éh uz Guri"})
+	})
+})
+
+app.delete('/user', (request, response) => {
+
+	mongo.UserModel.deleteOne({ user: request.query.user }, function(err, users) { 
+		if (err) {
+			response.send({ message: "Não Éh uz Guri: " + err})
+			throw err
+		}
+
+		mongo.ExperienceModel.deleteMany({ user: request.query.user }, function(err, users) { 
+			if (err) {
+				response.send({ message: "Não Éh uz Guri: " + err})
+				throw err
+			}
+
+			response.send(request.query.user + ' deletado com sucesso')
+		})
+	})
+})
+
+app.get('/positions', (request, response) => {
 	response.send(geolocation.userPositions)
+})
+
+app.post('/positions', (request, response) => {
+	for (let i = 0; i < request.body.length; i++) { geolocation.addLocation(request.body[i]) }
+    response.send({ message: 'É uz Guri' })
+})
+
+app.get('/roles', (request, response) => {
+	mongo.RoleModel.find(function(err, roles) { 
+		if (err) {
+			response.send({ message: "Não Éh uz Guri: " + err})
+			throw err
+		}
+
+		response.send(roles)
+	});
+})
+
+app.delete('/role', (request, response) => {
+
+	mongo.RoleModel.deleteOne({ name: request.query.name }, function(err, role) { 
+		if (err) {
+			response.send({ message: "Não Éh uz Guri: " + err})
+			throw err
+		}
+
+		response.send(request.query.name + ' deletado com sucesso')
+	});
 })
 
 app.get('/rolesForMe', (request, response) => {
@@ -101,28 +173,18 @@ app.get('/myExperiences', (request, response) => {
 	});
 })
 
-app.post('/user', (request, response) => { 
-
-	let newUserModel = new mongo.UserModel(request.body)
-	newUserModel.save(err => {
-		if (err) {
-			response.send({ message: "Não Éh uz Guri: " + err})
-			throw err
-		}
-
-		response.send({ message: "Éh uz Guri"})
-	})
-})
-
-app.post('/positions', function(request, response) {
-	for (let i = 0; i < request.body.length; i++) { geolocation.addLocation(request.body[i]) }
-    response.send({ message: 'É uz Guri' })
-})
-
-app.post('/experience', async (request, response) => { 
+app.post('/experience', (request, response) => { 
 
 	let newExperience = castMethods.castExperience(request.body)
-	
+
+	// esse trecho de código tem que ser apagado pois contêm uma gambiarra
+	let gambi = null
+	if (newExperience.comment && newExperience.comment[0] === '#') {
+		gambi = newExperience.comment
+		newExperience.comment = null
+	}
+	///////////////////////////////////////////////////////////////////////
+		
 	let newExperienceModel = new mongo.ExperienceModel(newExperience)
 	newExperienceModel.save(err => { 
 		if (err) {
@@ -144,6 +206,11 @@ app.post('/experience', async (request, response) => {
 						response.send({ message: "Não Éh uz Guri: " + err})
 						throw err
 					}
+
+					// esse trecho de código tem que ser apagado pois contêm uma gambiarra
+					if (gambi)
+						addGambi(newExperience.name, gambi)
+					///////////////////////////////////////////////////////////////////////
 				})
 			}
 			else {
@@ -167,26 +234,53 @@ app.post('/experience', async (request, response) => {
 						throw err
 					}
 				})
-	
-				let lists = []
+				
+				let lists = {}
 				if (newExperience.occasion)
-					lists.push({ occasions: newExperience.occasion })
+					lists['occasions'] = newExperience.occasion
 				if (newExperience.tag) 
-					lists.push({ tags: newExperience.tag })
+					lists['tags'] = newExperience.tag
 				if (newExperience.pic)
-					lists.push({ pics: newExperience.pic })
+					lists['pics'] = newExperience.pic
 				if (newExperience.comment)
-					lists.push({ comments: newExperience.comment })
-				if (lists.length > 0)
+					lists['comments'] = newExperience.comment
+				if (Object.keys(lists).length > 0)
 					mongo.RoleModel.updateMany({ name: role.name }, { $push: lists }, err => {
 						if (err) {
 							response.send({ message: "Não Éh uz Guri: " + err})
 							throw err
 						}
 					})
+
+				// esse trecho de código tem que ser apagado pois contêm uma gambiarra
+				if (gambi)
+					addGambi(role.name, gambi)
+				///////////////////////////////////////////////////////////////////////
 			}
 
 			response.send({ message: "Éh uz Guri"})
 		})
 	})
 })
+
+function addGambi(name, gambi) {
+	let rawTags = gambi.split(',')[0].split('#')
+	for (let i = 0; i < rawTags.length; i++)
+		if (rawTags[i] !== '')
+			mongo.RoleModel.updateOne({ name: name }, { $push: { tags: rawTags[i] } }, err => {
+				if (err) {
+					response.send({ message: "Não Éh uz Guri: " + err})
+					throw err
+				}
+			})
+
+	let rawOccasions = gambi.split(',')
+	for (let i = 1; i < rawOccasions.length; i++)
+		if (rawOccasions[i] !== '')
+			mongo.RoleModel.updateOne({ name: name }, { $push: { occasions: rawOccasions[i] } }, err => {
+				if (err) {
+					response.send({ message: "Não Éh uz Guri: " + err})
+					throw err
+				}
+			})
+}

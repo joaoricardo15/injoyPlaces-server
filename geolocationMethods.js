@@ -15,7 +15,7 @@ var mongo = require('./mongo')
 /////////////////////////////////////////////////////////////////////////////////////////*/
 
 var userPositions = []
-const maxPositionsPerUser = 1000
+const maxPositionsPerUser = 100
 const localMinimunInterval = 600
 
 const squaredArea = 50
@@ -25,9 +25,9 @@ const latitudeThreshold = squaredArea/geoLocationConstant
 module.exports = {
 	userPositions: userPositions,
   addLocation: addLocation,
-  squaredArea: 50,
-  geoLocationConstant: 111120,
-  latitudeThreshold: squaredArea/geoLocationConstant
+  squaredArea: squaredArea,
+  geoLocationConstant: geoLocationConstant,
+  latitudeThreshold: latitudeThreshold
 }
 
 function addLocation(position) {
