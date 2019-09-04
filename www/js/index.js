@@ -1,5 +1,4 @@
 url = "http://injoyserver-env.x2mviib6hg.us-east-1.elasticbeanstalk.com/positions"
-//url = "https://injoyserver.azurewebsites.net/positions"
 //url = "http://localhost:1000/positions"
 
 var map
@@ -14,28 +13,33 @@ function initMap() {
             
             if (users.length > 0)
             {
+				firstUser = users[0]
+                firstPosition = firstUser.locations[firstUser.locations.length - 1]
+
                 lastUser = users[users.length - 1]
                 lastPosition = lastUser.locations[lastUser.locations.length - 1]    
-                
+				
+				center = { lat: (firstPosition.lat + lastPosition.lat)/2, lng: (firstPosition.lng + lastPosition.lng)/2  }
+
                 map = new google.maps.Map(document.getElementById('map'), {
-                    center: lastPosition,
-                    zoom: 15
+                    center: center,
+                    zoom: 10
                 })
 
-								for (var user of users) {
+				for (var user of users) {
 
-									for(var location of user.locations)
-									{
-											addMarker(user.user, location.lat, location.lng);
-									}
+					for(var location of user.locations)
+					{
+						addMarker(user.user, location.timeStamp, location.lat, location.lng);
+					}
 
-									if (user.locals.length > 0) {
-											for(var local of user.locals)
-											{
-												addBart(user.user, local.arrival, local.departure, local.lat, local.lng);
-											}
-									}
-								}
+					if (user.locals.length > 0) {
+						for(var local of user.locals)
+						{
+							addBart(user.user, local.arrival, local.departure, local.lat, local.lng);
+						}
+					}
+				}
 
             } else {
                 alert("não há dados de localização a serem apresentados")
@@ -44,47 +48,30 @@ function initMap() {
     })
 }
 
-function addMarker(user, lat, lng) {
+function addMarker(user, timeStamp, lat, lng) {
 
     new google.maps.Marker({
-        title: user,
+        title: user + ' às ' + new Date(timeStamp),
         position: {
             lat: lat,
             lng: lng
         },
-        animation: google.maps.Animation.DROP,
         map: map
     })  
 }
 
 function addBart(user, arrival, departure, lat, lng) {
 
-    let googleUrl = "https://maps.googleapis.com/maps/api/place/nearbysearch/json?location=" + lat + "," + lng + "&rankby=distance&type=establishment&key=AIzaSyCf_4B1NNe-B_g1tLpUAr9djlFVgAVrtZk"
-
-    // $.ajax({
-    //     url: googleUrl,
-    //     type: "GET",
-    //     dataType: "json",
-    //     contentType: "application/json; charset=utf-8",
-    //     success: function(res, status) {
-
-    //         if (res.results.length > 2) {
-
-                new google.maps.Marker({
-                    title: user + ' entre as ' + new Date(arrival) + ' e as ' + new Date(departure),// + ' deve ter ido em: 1: ' + res.results[0].name + " / 2: " + res.results[1].name + " / 3: " + res.results[2].name,
-                    position: {
-                        lat: lat,
-                        lng: lng
-                    },
-                    icon: 'images/bart-icon.png',
-                    animation: google.maps.Animation.DROP,
-                    map: map
-                }) 
-
-    //         }
-
-    //     }
-    // })
+	new google.maps.Marker({
+		title: user + ' entre as ' + new Date(arrival) + ' e as ' + new Date(departure),
+		position: {
+			lat: lat,
+			lng: lng
+		},
+		icon: 'images/bart-icon.png',
+		animation: google.maps.Animation.DROP,
+		map: map
+	}) 
 }
 
 function postLocations() {
