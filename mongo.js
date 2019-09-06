@@ -6,7 +6,7 @@ var mongoose = require('mongoose')
 
 //mongoose.connect('mongodb://localhost')
 //mongoose.connect('mongodb://injoydb.cluster-ce1xg1mn2hdc.us-east-1.docdb.amazonaws.com:27017', { auth: { user: 'daozinho', password: 'Joao2020' }})
-mongoose.connect('mongodb://3.217.179.65:27017/injoydb', { auth: { user: 'cardoso', password: 'f#skfd798342&4f' }})
+mongoose.connect('mongodb://3.217.179.65:27017', { auth: { user: 'joaocardoso', password: 'di47y&3#cYf0[yX' }})
 	.then(() => { console.log('Mongoose is connected to MongoDb on 27017') })
 	.catch(err => { console.log('error: '+err) })	
 
@@ -66,61 +66,61 @@ module.exports = {
 	ExperienceModel: ExperienceModel
 }
 
-// var file = require('fs')
-// var ap11Model = new RoleModel({
-// 	name: 'Ap11',
-// 	ratting: { rattings: 1, average: 5 },
-// 	location: { lat: -30.039171, lng: -51.220676 },
-// 	address: { 
-// 		street: 'R. General Lima e Silva',
-// 		number: 697,
-// 		suburb: 'Cidade Baixa',
-// 		city: 'Porto Alegre',
-// 		state: 'RS',
-// 		country: 'Brasil'
-// 	},
-// 	pics: [ { data: file.readFileSync("./images/bars/ap11.jpg"), contentType: 'image/jpg' } ],
-// 	pic: 0,
-// 	comments: [],
-// 	occasions: [],
-// 	tags: []
-// })
-// var redDoor = new RoleModel({
-// 	name: 'Red Door',
-// 	ratting: { rattings: 1, average: 4 },
-// 	location: { lat: -30.041674, lng: -51.221539 },
-// 	address: {
-// 		street: 'R. José do Patrocínio', 
-// 		number: 797,
-// 		suburb: 'Cidade Baixa',
-// 		city: 'Porto Alegre',
-// 		state: 'RS',
-// 		country: 'Brasil'
-// 	},
-// 	pics: [ { data: file.readFileSync("./images/bars/redDoor.jpg"), contentType: 'image/jpg' } ],
-// 	pic: 0,
-// 	comments: [],
-// 	occasions: [],
-// 	tags: []
-// })
-// var voidModel = new RoleModel({
-// 	name: 'Void',
-// 	ratting: { rattings: 1, average: 4 },
-// 	location: { lat: -30.024672, lng: -51.203145 },
-// 	address: {
-// 		street: 'R. Luciana de Abreu',
-// 		number: 364,
-// 		suburb: 'Moinhos de Vento',
-// 		city: 'Porto Alegre',
-// 		state: 'RS',
-// 		country: 'Brasil'
-// 	},
-// 	pics: [ { data: file.readFileSync("./images/bars/void.jpg"), contentType: 'image/jpg' } ],
-// 	pic: 0,
-// 	comments: [],
-// 	occasions: [],
-// 	tags: []
-// })
-// ap11Model.save(function(err) { if (err) throw err })
-// redDoor.save(function(err) { if (err) throw err })
-// voidModel.save(function(err) { if (err) throw err })
+var file = require('fs')
+var ap11Model = new RoleModel({
+	name: 'Ap11',
+	ratting: { rattings: 1, average: 5 },
+	location: { lat: -30.039171, lng: -51.220676 },
+	address: { 
+		street: 'R. General Lima e Silva',
+		number: 697,
+		suburb: 'Cidade Baixa',
+		city: 'Porto Alegre',
+		state: 'RS',
+		country: 'Brasil'
+	},
+	pics: [ { data: file.readFileSync("./images/bars/ap11.jpg"), contentType: 'image/jpg' } ],
+	pic: 0,
+	comments: [],
+	occasions: [],
+	tags: []
+})
+var redDoor = new RoleModel({
+	name: 'Red Door',
+	ratting: { rattings: 1, average: 4 },
+	location: { lat: -30.041674, lng: -51.221539 },
+	address: {
+		street: 'R. José do Patrocínio', 
+		number: 797,
+		suburb: 'Cidade Baixa',
+		city: 'Porto Alegre',
+		state: 'RS',
+		country: 'Brasil'
+	},
+	pics: [ { data: file.readFileSync("./images/bars/redDoor.jpg"), contentType: 'image/jpg' } ],
+	pic: 0,
+	comments: [],
+	occasions: [],
+	tags: []
+})
+var voidModel = new RoleModel({
+	name: 'Void',
+	ratting: { rattings: 1, average: 4 },
+	location: { lat: -30.024672, lng: -51.203145 },
+	address: {
+		street: 'R. Luciana de Abreu',
+		number: 364,
+		suburb: 'Moinhos de Vento',
+		city: 'Porto Alegre',
+		state: 'RS',
+		country: 'Brasil'
+	},
+	pics: [ { data: file.readFileSync("./images/bars/void.jpg"), contentType: 'image/jpg' } ],
+	pic: 0,
+	comments: [],
+	occasions: [],
+	tags: []
+})
+ap11Model.save(function(err) { if (err) throw err })
+redDoor.save(function(err) { if (err) throw err })
+voidModel.save(function(err) { if (err) throw err })
