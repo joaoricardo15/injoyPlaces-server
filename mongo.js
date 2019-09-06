@@ -5,7 +5,8 @@
 var mongoose = require('mongoose')
 
 //mongoose.connect('mongodb://localhost')
-mongoose.connect('mongodb://injoydb.cluster-ce1xg1mn2hdc.us-east-1.docdb.amazonaws.com:27017', { auth: { user: 'daozinho', password: 'Joao2020' }})
+//mongoose.connect('mongodb://injoydb.cluster-ce1xg1mn2hdc.us-east-1.docdb.amazonaws.com:27017', { auth: { user: 'daozinho', password: 'Joao2020' }})
+mongoose.connect('mongodb://3.217.179.65:27017/injoydb', { auth: { user: 'cardoso', password: 'f#skfd798342&4f' }})
 	.then(() => { console.log('Mongoose is connected to MongoDb on 27017') })
 	.catch(err => { console.log('error: '+err) })	
 
