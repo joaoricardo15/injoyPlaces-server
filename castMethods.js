@@ -7,18 +7,24 @@ var file = require('fs')
 
 function createMyLists(roles) {
 		rolesIndexes = []
+		vegetariansIndexes = []
 
 		for (let i = 0; i < roles.length; i++) {
 			rolesIndexes.push(i)
+			for (let j = 0; j < roles[i].tags.length; j++) {
+				if (roles[i].tags[j] === 'vegetariano' || roles[i].tags[j] === 'opcoesvegetarianas') {
+					vegetariansIndexes.push(i)
+					break
+				}
+			}
 		}
 		
 		return {
 			roles: roles,
 			myLists: [
 				{ title: 'Para você', icon: 'flame', roles: rolesIndexes },
-				{ title: 'Bares', icon: 'beer', roles: rolesIndexes.slice().reverse() },
-				{ title: 'Restaurantes', icon: 'restaurant', roles: rolesIndexes },
-				{ title: 'Próximos', icon: 'pin', roles: rolesIndexes.slice().reverse() }
+				{ title: 'Próximos de você', icon: 'beer', roles: rolesIndexes.slice().reverse() },
+				{ title: 'Opções Vegetarianas', icon: 'restaurant', roles: vegetariansIndexes }
 			]
 		}
 }
