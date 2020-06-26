@@ -19,6 +19,7 @@
   "homepage": "https://github.com/joaoricardo15/InJoy_serverTest#readme",
   "dependencies": {
     "express": "^4.16.4",
+    "express-ws": "^4.0.0",
     "image-data-uri": "^2.0.0",
     "mongoose": "^5.5.11"
   }
