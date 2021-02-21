@@ -21,6 +21,6 @@
     "express": "^4.16.4",
     "express-ws": "^4.0.0",
     "image-data-uri": "^2.0.0",
-    "mongoose": "^5.5.11"
+    "mongoose": "^5.7.5"
   }
 }
